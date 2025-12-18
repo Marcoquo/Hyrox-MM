@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hyrox Pro - Dashboard V2</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0e14;
+            --bg-card: #141821;
+            --bg-card-hover: #1a1f2e;
+            --bg-exercise: #1c2230;
+            --accent-primary: #00ff88;
+            --accent-secondary: #00d4ff;
+            --accent-warning: #ffaa00;
+            --accent-force: #9d4edd;
+            --accent-accessory: #ff6b9d;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --text-muted: #6e7681;
+            --border: #21262d;
+            --success: #00ff88;
+            --shadow: rgba(0, 255, 136, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(0, 255, 136, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(0, 212, 255, 0.03) 0%, transparent 50%);
+            animation: drift 20s ease-in-out infinite;
+            pointer-events: none;
+        }
+        
+        @keyframes drift {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(-5%, 5%) rotate(2deg); }
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Header */
+        header {
+            margin-bottom: 24px;
+            animation: fadeInDown 0.6s ease-out;
+        }
+        
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .logo {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--accent-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .view-toggle {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .view-btn {
+            padding: 6px 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .view-btn:hover {
+            border-color: var(--accent-primary);
+            color: var(--text-primary);
+        }
+        
+        .view-btn.active {
+            background: var(--accent-primary);
+            color: var(--bg-dark);
+            border-color: var(--accent-primary);
+        }
+        
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .race-countdown {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .race-countdown .days {
+            color: var(--accent-primary);
+            font-weight: 600;
+        }
+        
+        /* Stats Dashboard */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 24px;
+            animation: fadeIn 0.8s ease-out 0.2s both;
+        }
+        
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            transition: all 0.2s;
+        }
+        
+        .stat-card:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-2px);
+        }
+        
+        .stat-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+        
+        .stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--accent-primary);
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+        }
+        
+        .stat-unit {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+        
+        .progress-bar {
+            margin-top: 8px;
+            height: 6px;
+            background: var(--bg-exercise);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+            transition: width 0.5s ease;
+        }
+        
+        /* Filters */
+        .filters {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            animation: fadeIn 0.8s ease-out 0.3s both;
+        }
+        
+        .filter-btn {
+            padding: 8px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .filter-btn:hover {
+            border-color: var(--accent-primary);
+            color: var(--text-primary);
+        }
+        
+        .filter-btn.active {
+            background: var(--accent-primary);
+            color: var(--bg-dark);
+            border-color: var(--accent-primary);
+        }
+        
+        /* Week nav */
+        .week-nav {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            animation: fadeIn 0.8s ease-out 0.4s both;
+        }
+        
+        .week-nav::-webkit-scrollbar {
+            height: 4px;
+        }
+        
+        .week-nav::-webkit-scrollbar-track {
+            background: var(--bg-card);
+            border-radius: 2px;
+        }
+        
+        .week-nav::-webkit-scrollbar-thumb {
+            background: var(--accent-primary);
+            border-radius: 2px;
+        }
+        
+        .week-btn {
+            flex-shrink: 0;
+            padding: 10px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            position: relative;
+        }
+        
+        .week-btn:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--accent-primary);
+            color: var(--text-primary);
+            transform: translateY(-1px);
+        }
+        
+        .week-btn.active {
+            background: var(--accent-primary);
+            color: var(--bg-dark);
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 20px var(--shadow);
+        }
+        
+        .week-btn .completion-indicator {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 12px;
+            height: 12px;
+            background: var(--success);
+            border-radius: 50%;
+            border: 2px solid var(--bg-dark);
+            display: none;
+        }
+        
+        .week-btn.completed .completion-indicator {
+            display: block;
+        }
+        
+        /* Calendar view */
+        .calendar-view {
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+        }
+        
+        .calendar-view.active {
+            display: block;
+        }
+        
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+        }
+        
+        .calendar-day {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            transition: all 0.2s;
+        }
+        
+        .calendar-day:hover {
+            border-color: var(--accent-secondary);
+            transform: translateY(-2px);
+        }
+        
+        .day-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .day-name {
+            font-weight: 600;
+            font-size: 15px;
+        }
+        
+        .day-sessions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .day-session-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        
+        .session-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+        
+        .session-dot.upper { background: #667eea; }
+        .session-dot.lower { background: #f5576c; }
+        .session-dot.hyrox { background: var(--accent-primary); }
+        .session-dot.campus { background: var(--accent-secondary); }
+        
+        /* Week display */
+        .week-display {
+            display: none;
+            animation: fadeInUp 0.4s ease-out;
+        }
+        
+        .week-display.active {
+            display: block;
+        }
+        
+        .week-header {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .week-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 12px;
+        }
+        
+        .week-title h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--accent-primary);
+        }
+        
+        .week-dates {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+        
+        .week-progress {
+            margin-top: 16px;
+        }
+        
+        .week-progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+        
+        .week-notes {
+            margin-top: 16px;
+            padding: 12px;
+            background: rgba(255, 170, 0, 0.08);
+            border-left: 3px solid var(--accent-warning);
+            border-radius: 6px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        
+        /* Session cards */
+        .sessions {
+            display: grid;
+            gap: 20px;
+        }
+        
+        .session-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .session-card.hidden {
+            display: none;
+        }
+        
+        .session-card:hover {
+            border-color: var(--accent-secondary);
+            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.08);
+            transform: translateY(-2px);
+        }
+        
+        .session-card.completed {
+            border-color: var(--success);
+            opacity: 0.9;
+        }
+        
+        .session-header {
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg-exercise);
+        }
+        
+        .session-type {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .session-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        
+        .session-icon.upper {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .session-icon.lower {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .session-icon.hyrox {
+            background: linear-gradient(135deg, #00ff88 0%, #00d4ff 100%);
+        }
+        
+        .session-name {
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        .session-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .session-badge {
+            padding: 4px 10px;
+            background: rgba(0, 255, 136, 0.1);
+            color: var(--accent-primary);
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Checkbox */
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+        
+        .checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            background: var(--bg-card);
+        }
+        
+        .checkbox:hover {
+            border-color: var(--accent-primary);
+        }
+        
+        .checkbox.checked {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+        }
+        
+        .checkbox.checked::after {
+            content: '✓';
+            color: var(--bg-dark);
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .checkbox-label {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+        
+        /* Exercise list */
+        .exercise-list {
+            padding: 16px 20px;
+        }
+        
+        .bloc-section {
+            margin-bottom: 24px;
+        }
+        
+        .bloc-section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .bloc-title {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .bloc-title.force {
+            color: var(--accent-force);
+        }
+        
+        .bloc-title.accessoires {
+            color: var(--accent-accessory);
+        }
+        
+        .exercise {
+            background: var(--bg-exercise);
+            border-radius: 8px;
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            transition: all 0.2s ease;
+        }
+        
+        .exercise:hover {
+            background: var(--bg-card-hover);
+            transform: translateX(4px);
+        }
+        
+        .exercise:last-child {
+            margin-bottom: 0;
+        }
+        
+        .exercise-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+        
+        .exercise-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+        }
+        
+        .exercise-stat {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+        }
+        
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent-primary);
+            font-weight: 600;
+        }
+        
+        .exercise-notes {
+            margin-top: 8px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+        
+        /* Hyrox detailed */
+        .hyrox-content {
+            padding: 20px;
+        }
+        
+        .hyrox-section {
+            margin-bottom: 20px;
+        }
+        
+        .hyrox-section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .hyrox-section-title {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--accent-primary);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .hyrox-section-content {
+            background: var(--bg-exercise);
+            border-radius: 8px;
+            padding: 14px;
+            font-size: 13px;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            white-space: pre-line;
+        }
+        
+        .hyrox-option {
+            background: var(--bg-exercise);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+        
+        .hyrox-option-header {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .hyrox-option-content {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+        
+        /* Footer */
+        footer {
+            margin-top: 60px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+        
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 16px;
+            }
+            
+            h1 {
+                font-size: 22px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .stat-value {
+                font-size: 22px;
+            }
+            
+            .calendar-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-top">
+                <div class="logo">⚡ Hyrox Pro V2</div>
+                <div class="view-toggle">
+                    <button class="view-btn active" onclick="switchView('week')">📅 Semaine</button>
+                    <button class="view-btn" onclick="switchView('calendar')">🗓️ Calendrier</button>
+                </div>
+            </div>
+            <h1>Dashboard Entraînement</h1>
+            <div class="race-countdown">
+                📍 Toulouse · <span class="days" id="countdown">--</span> jours restants · 22 Mars 2026
+            </div>
+        </header>
+        
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Progression globale</div>
+                <div class="stat-value">
+                    <span id="globalProgress">0</span>
+                    <span class="stat-unit">%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="globalProgressBar" style="width: 0%"></div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Séances complétées</div>
+                <div class="stat-value">
+                    <span id="completedSessions">0</span>
+                    <span class="stat-unit">/ <span id="totalSessions">39</span></span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Semaine actuelle</div>
+                <div class="stat-value">
+                    <span id="currentWeek">1</span>
+                    <span class="stat-unit">/ 13</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Jours d'entraînement</div>
+                <div class="stat-value">
+                    <span id="trainingDays">0</span>
+                    <span class="stat-unit">jours</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Filters -->
+        <div class="filters" id="filters">
+            <button class="filter-btn active" onclick="filterSessions('all')">
+                <span>📋</span> Tout
+            </button>
+            <button class="filter-btn" onclick="filterSessions('upper')">
+                <span>💪</span> Upper
+            </button>
+            <button class="filter-btn" onclick="filterSessions('lower')">
+                <span>🦵</span> Lower
+            </button>
+            <button class="filter-btn" onclick="filterSessions('hyrox')">
+                <span>⚡</span> Hyrox
+            </button>
+        </div>
+        
+        <!-- Week navigation -->
+        <nav class="week-nav" id="weekNav"></nav>
+        
+        <!-- Calendar view -->
+        <div class="calendar-view" id="calendarView">
+            <div class="calendar-grid" id="calendarGrid"></div>
+        </div>
+        
+        <!-- Week view -->
+        <div id="weekContent"></div>
+        
+        <footer>
+            Programme 13 semaines · Hyrox Pro Toulouse 2026 · V2 PRO
+        </footer>
+    </div>
+    
+    <script>
+        const trainingData = {"musculation": [{"numero": 1, "dates": "22-28 Déc", "notes": "Campus ~3h. ISCHIO: Skip squash, rameur→Bike/Ski finishers", "upper": [{"nom": "Bench Press Barre", "series": "4x5", "charge": "92kg", "notes": "Prog: +2kg sem précédente", "bloc": "Force"}, {"nom": "Cable Row Horizontal", "series": "4x6-8", "charge": "70kg", "notes": "Focus contraction dorsaux", "bloc": "Force"}, {"nom": "Développé Incliné Haltères", "series": "3x8", "charge": "2x28kg", "notes": "Tempo contrôlé", "bloc": "Force"}, {"nom": "Élévations Latérales", "series": "3x12", "charge": "2x10kg", "notes": "Épaules endurance (support WB)", "bloc": "Accessoires"}, {"nom": "Cable Pulldown", "series": "3x10", "charge": "60kg", "notes": "Sled Pull support", "bloc": "Accessoires"}, {"nom": "Face Pulls", "series": "3x15", "charge": "30kg", "notes": "Stabilité épaules", "bloc": "Accessoires"}], "lower": [{"nom": "Hip Thrust Machine", "series": "4x10", "charge": "70kg", "notes": "Prog: +5kg, remplace Trap Bar", "bloc": "Force"}, {"nom": "Back Squat", "series": "4x6", "charge": "92kg", "notes": "Rotation: Back cette semaine", "bloc": "Force"}, {"nom": "Squat Bulgare", "series": "3x8/jambe", "charge": "2x24kg", "notes": "Force unilatérale", "bloc": "Force"}, {"nom": "Lunges Pondérées HALTÈRES", "series": "3x20m", "charge": "2x24kg", "notes": "Force - Haltères muscu", "bloc": "Accessoires"}, {"nom": "Goblet Squat", "series": "3x12", "charge": "28kg", "notes": "WB endurance jambes", "bloc": "Accessoires"}, {"nom": "Broad Jumps", "series": "3x5", "charge": "Corps", "notes": "BBJ support - Distance max", "bloc": "Accessoires"}]}, {"numero": 2, "dates": "29 Déc-4 Jan", "notes": "Campus ~3h. ISCHIO: Toujours prudent rameur/squash", "upper": [{"nom": "Bench Press Barre", "series": "4x5", "charge": "94kg", "notes": "+2kg", "bloc": "Force"}, {"nom": "Tirage Horizontal Poulie", "series": "4x6-8", "charge": "73kg", "notes": "+3kg", "bloc": "Force"}, {"nom": "Développé Incliné Haltères", "series": "3x8", "charge": "2x30kg", "notes": "+2kg/haltère", "bloc": "Force"}, {"nom": "Développé Haltères Épaules", "series": "4x8", "charge": "2x20kg", "notes": "WB endurance", "bloc": "Accessoires"}, {"nom": "Tirage Vertical", "series": "3x10", "charge": "65kg", "notes": "+5kg", "bloc": "Accessoires"}, {"nom": "Élévations Postérieures", "series": "3x15", "charge": "2x8kg", "notes": "Stabilité", "bloc": "Accessoires"}], "lower": [{"nom": "Hip Thrust Machine", "series": "4x10", "charge": "75kg", "notes": "+5kg", "bloc": "Force"}, {"nom": "Back Squat", "series": "4x6", "charge": "95kg", "notes": "+3kg", "bloc": "Force"}, {"nom": "Squat Bulgare", "series": "3x8/jambe", "charge": "2x26kg", "notes": "+2kg/haltère", "bloc": "Force"}, {"nom": "Lunges Pondérées HALTÈRES", "series": "3x20m", "charge": "2x26kg", "notes": "+2kg progression", "bloc": "Accessoires"}, {"nom": "Goblet Squat", "series": "3x12", "charge": "30kg", "notes": "+2kg", "bloc": "Accessoires"}, {"nom": "Presse à Cuisse", "series": "3x10", "charge": "140kg", "notes": "Force pure", "bloc": "Accessoires"}]}, {"numero": 3, "dates": "5-11 Jan", "notes": "Campus HAUTE ~7h. Muscu DELOAD. Test squash léger fin sem?", "upper": [{"nom": "Bench Press Barre", "series": "3x5", "charge": "85kg", "notes": "Volume -20%, charge -10%", "bloc": "Force"}, {"nom": "Tirage Horizontal", "series": "3x6", "charge": "65kg", "notes": "Réduit", "bloc": "Force"}, {"nom": "Développé Incliné Haltères", "series": "3x6", "charge": "2x24kg", "notes": "Léger", "bloc": "Force"}, {"nom": "Élévations Latérales", "series": "3x10", "charge": "2x8kg", "notes": "Réduit", "bloc": "Accessoires"}, {"nom": "Cable Pulldown", "series": "3x8", "charge": "50kg", "notes": "Technique", "bloc": "Accessoires"}, {"nom": "Face Pulls", "series": "3x12", "charge": "25kg", "notes": "Léger", "bloc": "Accessoires"}], "lower": [{"nom": "Hip Thrust Machine", "series": "3x8", "charge": "65kg", "notes": "Volume -30%", "bloc": "Force"}, {"nom": "Front Squat", "series": "4x6", "charge": "75kg", "notes": "Rotation: Front, DÉCOUVERTE", "bloc": "Force"}, {"nom": "Squat Bulgare", "series": "3x6/jambe", "charge": "2x20kg", "notes": "Réduit", "bloc": "Force"}, {"nom": "Lunges HALTÈRES", "series": "2x20m", "charge": "2x24kg", "notes": "Volume réduit", "bloc": "Accessoires"}, {"nom": "Goblet Squat", "series": "3x10", "charge": "24kg", "notes": "Léger", "bloc": "Accessoires"}, {"nom": "SKIP Broad Jumps", "series": "", "charge": "", "notes": "Récup", "bloc": "Accessoires"}]}, {"numero": 4, "dates": "12-18 Jan", "notes": "Campus DELOAD ~3h. Test rameur 500m si ischio OK", "upper": [{"nom": "Bench Press Barre", "series": "4x5", "charge": "96kg", "notes": "Retour prog +2kg", "bloc": "Force"}, {"nom": "Cable Row", "series": "4x6-8", "charge": "76kg", "notes": "+3kg", "bloc": "Force"}, {"nom": "Développé Incliné Haltères", "series": "3x8", "charge": "2x32kg", "notes": "+2kg", "bloc": "Force"}, {"nom": "Développé Épaules", "series": "4x8", "charge": "2x22kg", "notes": "+2kg", "bloc": "Accessoires"}, {"nom": "Tirage Vertical", "series": "3x10", "charge": "68kg", "notes": "+3kg", "bloc": "Accessoires"}, {"nom": "Élévations Frontales", "series": "3x12", "charge": "2x10kg", "notes": "Nouveau", "bloc": "Accessoires"}], "lower": [{"nom": "Hip Thrust Machine", "series": "4x10", "charge": "80kg", "notes": "+5kg fort", "bloc": "Force"}, {"nom": "Front Squat", "series": "4x8", "charge": "80kg", "notes": "Prog +5kg", "bloc": "Force"}, {"nom": "Squat Bulgare", "series": "3x8/jambe", "charge": "2x28kg", "notes": "+2kg", "bloc": "Force"}, {"nom": "Lunges HALTÈRES", "series": "3x20m", "charge": "2x28kg", "notes": "+2kg", "bloc": "Accessoires"}, {"nom": "Goblet Squat", "series": "3x12", "charge": "32kg", "notes": "+2kg", "bloc": "Accessoires"}, {"nom": "Broad Jumps", "series": "4x5", "charge": "Corps", "notes": "+1 série", "bloc": "Accessoires"}]}, {"numero": 5, "dates": "19-25 Jan", "notes": "Campus ~7h haute. Ischio devrait être OK maintenant", "upper": [{"nom": "Bench Press Barre", "series": "5x5", "charge": "98kg", "notes": "Volume +25%, +2kg", "bloc": "Force"}, {"nom": "Tirage Horizontal", "series": "4x6", "charge": "80kg", "notes": "+4kg, reps -2", "bloc": "Force"}, {"nom": "Développé Incliné Haltères", "series": "4x6", "charge": "2x34kg", "notes": "+2kg", "bloc": "Force"}, {"nom": "Développé Épaules", "series": "4x8", "charge": "2x24kg", "notes": "+2kg", "bloc": "Accessoires"}, {"nom": "Cable Pulldown", "series": "3x8", "charge": "70kg", "notes": "Lourd", "bloc": "Accessoires"}, {"nom": "Écartés Pectoraux Poulie", "series": "3x12", "charge": "15kg", "notes": "Nouveau", "bloc": "Accessoires"}], "lower": [{"nom": "Hip Thrust Machine", "series": "5x10", "charge": "85kg", "notes": "Volume +25%", "bloc": "Force"}, {"nom": "Back Squat", "series": "5x5", "charge": "98kg", "notes": "Rotation: Back, +3kg", "bloc": "Force"}, {"nom": "Squat Bulgare", "series": "4x8/jambe", "charge": "2x30kg", "notes": "+2kg", "bloc": "Force"}, {"nom": "Lunges HALTÈRES", "series": "4x20m", "charge": "2x28kg", "notes": "Volume +33%", "bloc": "Accessoires"}, {"nom": "Hack Squat", "series": "3x8", "charge": "100kg", "notes": "Nouveau - Force", "bloc": "Accessoires"}, {"nom": "Broad Jumps", "series": "4x5", "charge": "Corps", "notes": "Constance", "bloc": "Accessoires"}]}, {"numero": 6, "dates": "26 Jan-1 Fév", "notes": "Campus ~8h haute. PRO! 100kg bench/squat. Lunges lourdes!", "upper": [{"nom": "Bench Press Barre", "series": "5x5", "charge": "100kg", "notes": "+2kg - 100kg atteint!", "bloc": "Force"}, {"nom": "Cable Row", "series": "5x6", "charge": "83kg", "notes": "+3kg", "bloc": "Force"}, {"nom": "Développé Couché Haltères", "series": "4x8", "charge": "2x40kg", "notes": "Variante", "bloc": "Force"}, {"nom": "Développé Épaules", "series": "5x6", "charge": "2x26kg", "notes": "Lourd -2 reps", "bloc": "Accessoires"}, {"nom": "Tirage Bûcheron", "series": "3x10/bras", "charge": "36kg", "notes": "Unilatéral", "bloc": "Accessoires"}, {"nom": "Face Pulls", "series": "4x15", "charge": "35kg", "notes": "+5kg", "bloc": "Accessoires"}], "lower": [{"nom": "Hip Thrust Machine", "series": "5x10", "charge": "90kg", "notes": "+5kg", "bloc": "Force"}, {"nom": "Back Squat", "series": "5x5", "charge": "100kg", "notes": "+2kg - 100kg!", "bloc": "Force"}, {"nom": "Squat Bulgare", "series": "4x8/jambe", "charge": "2x32kg", "notes": "+2kg", "bloc": "Force"}, {"nom": "Lunges HALTÈRES", "series": "4x20m", "charge": "2x30kg", "notes": "+2kg - Lourd!", "bloc": "Accessoires"}, {"nom": "Goblet Squat", "series": "4x10", "charge": "36kg", "notes": "+4kg lourd", "bloc": "Accessoires"}, {"nom": "Leg Extension", "series": "3x15", "charge": "60kg", "notes": "Finition quads", "bloc": "Accessoires"}]}, {"numero": 7, "dates": "2-8 Fév", "notes": "Campus HAUTE ~9h. Muscu DELOAD. Récup avant pic", "upper": [{"nom": "Bench Press Barre", "series": "3x5", "charge": "90kg", "notes": "Volume -40%, charge -10%", "bloc": "Force"}, {"nom": "Tirage Horizontal", "series": "3x6", "charge": "75kg", "notes": "Réduit", "bloc": "Force"}, {"nom": "Développé Incliné Haltères", "series": "3x6", "charge": "2x28kg", "notes": "Léger", "bloc": "Force"}, {"nom": "Élévations Latérales", "series": "3x10", "charge": "2x10kg", "notes": "Technique", "bloc": "Accessoires"}, {"nom": "Cable Pulldown", "series": "3x8", "charge": "55kg", "notes": "Léger", "bloc": "Accessoires"}, {"nom": "Pompes", "series": "3x10", "charge": "Corps", "notes": "Bodyweight", "bloc": "Accessoires"}], "lower": [{"nom": "Hip Thrust Machine", "series": "3x8", "charge": "75kg", "notes": "Volume -40%", "bloc": "Force"}, {"nom": "Front Squat", "series": "4x6", "charge": "85kg", "notes": "Rotation: Front, +5kg", "bloc": "Force"}, {"nom": "Squat Bulgare", "series": "3x6/jambe", "charge": "2x24kg", "notes": "Réduit", "bloc": "Force"}, {"nom": "Lunges HALTÈRES", "series": "2x20m", "charge": "2x28kg", "notes": "Volume réduit", "bloc": "Accessoires"}, {"nom": "Goblet Squat", "series": "3x8", "charge": "28kg", "notes": "Léger", "bloc": "Accessoires"}, {"nom": "SKIP Broad Jumps", "series": "", "charge": "", "notes": "Récup", "bloc": "Accessoires"}]}, {"numero": 8, "dates": "9-15 Fév", "notes": "Campus DELOAD ~3h. Test Hyrox WB prioritaire", "upper": [{"nom": "Bench Press Barre", "series": "5x4", "charge": "103kg", "notes": "Test +3kg, reps -1", "bloc": "Force"}, {"nom": "Cable Row", "series": "5x6", "charge": "85kg", "notes": "+2kg", "bloc": "Force"}, {"nom": "Développé Incliné Barre", "series": "4x6", "charge": "75kg", "notes": "Barre variante", "bloc": "Force"}, {"nom": "Développé Épaules", "series": "5x6", "charge": "2x28kg", "notes": "+2kg", "bloc": "Accessoires"}, {"nom": "Tirage Vertical", "series": "4x8", "charge": "72kg", "notes": "+4kg", "bloc": "Accessoires"}, {"nom": "Élévations Postérieures", "series": "4x12", "charge": "2x10kg", "notes": "+2kg", "bloc": "Accessoires"}], "lower": [{"nom": "Hip Thrust Machine", "series": "5x10", "charge": "95kg", "notes": "+5kg test", "bloc": "Force"}, {"nom": "Front Squat", "series": "5x6", "charge": "88kg", "notes": "+3kg", "bloc": "Force"}, {"nom": "Squat Bulgare", "series": "4x8/jambe", "charge": "2x34kg", "notes": "+2kg", "bloc": "Force"}, {"nom": "Lunges HALTÈRES", "series": "4x20m", "charge": "2x30kg", "notes": "Maintien lourd", "bloc": "Accessoires"}, {"nom": "Presse à Cuisse", "series": "4x8", "charge": "160kg", "notes": "+20kg lourd", "bloc": "Accessoires"}, {"nom": "Broad Jumps", "series": "4x5", "charge": "Corps", "notes": "Test", "bloc": "Accessoires"}]}, {"numero": 9, "dates": "16-22 Fév", "notes": "Campus HAUTE MAX ~11h. Pic force muscu", "upper": [{"nom": "Bench Press Barre", "series": "4x4", "charge": "105kg", "notes": "Pic force +2kg", "bloc": "Force"}, {"nom": "Tirage Horizontal", "series": "5x5", "charge": "88kg", "notes": "Force max", "bloc": "Force"}, {"nom": "Développé Incliné Haltères", "series": "4x6", "charge": "2x36kg", "notes": "+2kg", "bloc": "Force"}, {"nom": "Développé Épaules", "series": "5x5", "charge": "2x30kg", "notes": "Lourd WB prep", "bloc": "Accessoires"}, {"nom": "Cable Pulldown", "series": "4x6", "charge": "75kg", "notes": "Sled Pull force", "bloc": "Accessoires"}, {"nom": "Face Pulls", "series": "4x15", "charge": "40kg", "notes": "+5kg", "bloc": "Accessoires"}], "lower": [{"nom": "Hip Thrust Machine", "series": "5x8", "charge": "100kg", "notes": "+5kg pic", "bloc": "Force"}, {"nom": "Back Squat", "series": "4x4", "charge": "103kg", "notes": "Rotation: Back, +3kg force", "bloc": "Force"}, {"nom": "Squat Bulgare", "series": "4x6/jambe", "charge": "2x36kg", "notes": "+2kg lourd", "bloc": "Force"}, {"nom": "Lunges HALTÈRES", "series": "5x20m", "charge": "2x30kg", "notes": "Volume max lourd", "bloc": "Accessoires"}, {"nom": "Goblet Squat", "series": "4x8", "charge": "40kg", "notes": "+4kg", "bloc": "Accessoires"}, {"nom": "Leg Extension", "series": "4x12", "charge": "70kg", "notes": "+10kg", "bloc": "Accessoires"}]}, {"numero": 10, "dates": "23 Fév-1 Mars", "notes": "Campus ~9h. Simulation Hyrox = PRIORITÉ ABSOLUE", "upper": [{"nom": "Bench Press Barre", "series": "4x3", "charge": "107kg", "notes": "+2kg", "bloc": "Force"}, {"nom": "Cable Row", "series": "5x5", "charge": "90kg", "notes": "+2kg", "bloc": "Force"}, {"nom": "Développé Couché Haltères", "series": "4x6", "charge": "2x42kg", "notes": "+2kg", "bloc": "Force"}, {"nom": "Développé Épaules", "series": "4x6", "charge": "2x30kg", "notes": "Maintien", "bloc": "Accessoires"}, {"nom": "Tirage Bûcheron", "series": "4x8/bras", "charge": "38kg", "notes": "+2kg", "bloc": "Accessoires"}, {"nom": "Élévations Latérales", "series": "4x10", "charge": "2x12kg", "notes": "+2kg", "bloc": "Accessoires"}], "lower": [{"nom": "Hip Thrust Machine", "series": "4x8", "charge": "105kg", "notes": "+5kg", "bloc": "Force"}, {"nom": "Back Squat", "series": "4x3", "charge": "105kg", "notes": "+2kg pic", "bloc": "Force"}, {"nom": "Squat Bulgare", "series": "4x6/jambe", "charge": "2x38kg", "notes": "+2kg", "bloc": "Force"}, {"nom": "Lunges HALTÈRES", "series": "4x20m", "charge": "2x30kg", "notes": "Maintien", "bloc": "Accessoires"}, {"nom": "Hack Squat", "series": "4x6", "charge": "120kg", "notes": "+20kg", "bloc": "Accessoires"}, {"nom": "Broad Jumps", "series": "5x5", "charge": "Corps", "notes": "Max volume", "bloc": "Accessoires"}]}, {"numero": 11, "dates": "2-8 Mars", "notes": "Campus ~4h descente. TAPER. Fraîcheur prioritaire", "upper": [{"nom": "Bench Press Barre", "series": "3x3", "charge": "95kg", "notes": "Volume -50%, charge -12kg", "bloc": "Force"}, {"nom": "Tirage Horizontal", "series": "3x5", "charge": "80kg", "notes": "Réduit", "bloc": "Force"}, {"nom": "Développé Incliné Haltères", "series": "3x5", "charge": "2x30kg", "notes": "Léger", "bloc": "Force"}, {"nom": "Développé Épaules", "series": "3x6", "charge": "2x24kg", "notes": "Technique", "bloc": "Accessoires"}, {"nom": "Cable Pulldown", "series": "3x6", "charge": "60kg", "notes": "Léger", "bloc": "Accessoires"}, {"nom": "SKIP Face Pulls", "series": "", "charge": "", "notes": "Minimal", "bloc": "Accessoires"}], "lower": [{"nom": "Hip Thrust Machine", "series": "3x6", "charge": "85kg", "notes": "Volume -50%", "bloc": "Force"}, {"nom": "Front Squat", "series": "3x5", "charge": "90kg", "notes": "Rotation: Front, technique", "bloc": "Force"}, {"nom": "Squat Bulgare", "series": "3x5/jambe", "charge": "2x28kg", "notes": "Léger", "bloc": "Force"}, {"nom": "Lunges HALTÈRES", "series": "2x20m", "charge": "2x28kg", "notes": "Technique", "bloc": "Accessoires"}, {"nom": "Goblet Squat", "series": "3x6", "charge": "32kg", "notes": "Léger", "bloc": "Accessoires"}, {"nom": "SKIP Broad Jumps", "series": "", "charge": "", "notes": "Fraîcheur", "bloc": "Accessoires"}]}, {"numero": 12, "dates": "9-15 Mars", "notes": "Campus ~2.5h. Dernière séance JEUDI 12 MARS max", "upper": [{"nom": "Bench Press Barre", "series": "2x3", "charge": "90kg", "notes": "Activation neurale", "bloc": "Force"}, {"nom": "Tirage Horizontal", "series": "2x5", "charge": "75kg", "notes": "Léger", "bloc": "Force"}, {"nom": "Développé Incliné Haltères", "series": "2x5", "charge": "2x28kg", "notes": "Activation", "bloc": "Force"}, {"nom": "Développé Épaules", "series": "2x6", "charge": "2x20kg", "notes": "Technique", "bloc": "Accessoires"}, {"nom": "SKIP reste", "series": "", "charge": "", "notes": "Minimal", "bloc": "Accessoires"}], "lower": [{"nom": "Hip Thrust Machine", "series": "2x5", "charge": "80kg", "notes": "Activation", "bloc": "Force"}, {"nom": "Back Squat", "series": "2x3", "charge": "95kg", "notes": "Rotation: Back, neural", "bloc": "Force"}, {"nom": "Squat Bulgare", "series": "2x5/jambe", "charge": "2x24kg", "notes": "Technique", "bloc": "Force"}, {"nom": "Lunges HALTÈRES", "series": "1x20m", "charge": "2x24kg", "notes": "Rappel technique", "bloc": "Accessoires"}, {"nom": "SKIP reste", "series": "", "charge": "", "notes": "Fraîcheur absolue", "bloc": "Accessoires"}]}, {"numero": 13, "dates": "16-22 Mars", "notes": "Campus ~1.5h. Activation MAR 17. OFF MER-SAM. 🔥 COURSE DIM 22!", "upper": [{"nom": "Bench Press Barre", "series": "2x3", "charge": "90kg", "notes": "MARDI 17: Activation légère", "bloc": "Force"}, {"nom": "Tirage Horizontal", "series": "2x5", "charge": "75kg", "notes": "Rappel mouvement", "bloc": "Force"}, {"nom": "Mobilité", "series": "10min", "charge": "", "notes": "Épaules + dos", "bloc": "Force"}, {"nom": "SKIP", "series": "", "charge": "", "notes": "Repos absolue", "bloc": "Accessoires"}], "lower": [{"nom": "Hip Thrust Machine", "series": "2x5", "charge": "80kg", "notes": "MARDI 17: Activation", "bloc": "Force"}, {"nom": "Back Squat", "series": "2x3", "charge": "95kg", "notes": "Rappel mouvement", "bloc": "Force"}, {"nom": "Mobilité", "series": "10min", "charge": "", "notes": "Hanches + chevilles", "bloc": "Force"}, {"nom": "Lunges HALTÈRES", "series": "1x20m", "charge": "2x20kg", "notes": "Rappel léger", "bloc": "Accessoires"}, {"nom": "SKIP reste", "series": "", "charge": "", "notes": "Repos", "bloc": "Accessoires"}]}], "hyrox": [{"numero": 1, "dates": "22-28 Déc", "focus": "Focus: WB Technique + Adaptation", "echauffement": "5min mobilité (hanches, épaules, chevilles)\n3x5 Broad Jumps (sans burpee)\n3x3 BBJ (technique)\n2x10 WB @ 6kg", "option_a": {"format": "EMOM 24min (8 rounds x 3min)", "contenu": "Min 1: 15 Wall Balls @ 9kg\nMin 2: 20m Lunges SANDBAG @ 28kg\nMin 3: 20 KB Swings @ 24kg", "notes": "Focus technique WB parfaite. Rythme constant."}, "option_b": {"format": "EMOM 24min (8 rounds x 3min)", "contenu": "Min 1: 15 Wall Balls @ 9kg\nMin 2: 250m Row @ modéré\nMin 3: 20 KB Swings @ 24kg", "notes": "Row remplace lunges si pluie. Même objectif technique."}, "cooldown": "5min étirements (quadriceps, épaules, dos)", "objectifs": "• Technique WB parfaite (squat profond, lancer fluide)\n• Campus ~3h bas\n• ISCHIO: Ski OK, pas rameur. Skip squash."}, {"numero": 2, "dates": "29 Déc-4 Jan", "focus": "Focus: Sled Push Overload + BBJ", "echauffement": "5min mobilité\n3x2x12.5m Sled Push @ 150kg\n3x3 BBJ\n500m Row @ facile", "option_a": {"format": "5 rounds FOR TIME", "contenu": "4x12.5m Sled Push @ 210kg (pro+8kg)\n400m Run @ pace Hyrox (~4:15/km)\n2min30 repos entre rounds", "notes": "Objectif: <20min total. Sled: puissance, run: pace."}, "option_b": {"format": "5 rounds FOR TIME", "contenu": "4x12.5m Sled Push @ 210kg\n500m Row @ intensité élevée\n2min repos entre rounds", "notes": "Row remplace run, intensité similaire."}, "cooldown": "5min mobilité hanches + quadriceps", "objectifs": "• Overload sled +8kg\n• Campus ~3h bas\n• ISCHIO: Toujours prudent rameur/squash"}, {"numero": 3, "dates": "5-11 Jan", "focus": "Focus: WB Endurance + Mix stations", "echauffement": "5min mobilité\n3x10 WB @ 6kg\n2x15 WB @ 9kg\n500m Ski @ facile", "option_a": {"format": "AMRAP 30min", "contenu": "30 Wall Balls @ 9kg\n100m Farmers @ 2x32kg (overload)\n20 Burpees\n400m Run", "notes": "Objectif: >4 rounds. Pas pause WB, farmers unbroken."}, "option_b": {"format": "AMRAP 30min", "contenu": "30 Wall Balls @ 9kg\n100m Farmers @ 2x32kg\n20 Burpees\n500m Ski", "notes": "Ski remplace run."}, "cooldown": "5min étirements épaules + grip", "objectifs": "• WB endurance 30 reps sans casser\n• Campus HAUTE ~7h\n• Test squash léger fin semaine?"}, {"numero": 4, "dates": "12-18 Jan", "focus": "Focus: TEST STATIONS (Baseline)", "echauffement": "10min échauffement complet\nActivation toutes stations légères", "option_a": {"format": "FOR TIME (Baseline)", "contenu": "1000m SkiErg\n4x12.5m Sled Push @ 202kg (poids pro exact)\n4x12.5m Sled Pull @ 153kg (poids pro exact)\n80m Burpee Broad Jump\n1000m Row", "notes": "CHRONO TOTAL. Baseline référence. Effort 85%."}, "option_b": {"format": "Même test", "contenu": "Identique Option A", "notes": "Test intérieur, pas besoin alternative."}, "cooldown": "10min récup active + mobilité", "objectifs": "• Temps total: ~18-20min objectif\n• Campus DELOAD ~3h\n• Test rameur 500m si ischio OK"}, {"numero": 5, "dates": "19-25 Jan", "focus": "Focus: WB + Sled Push Compromised", "echauffement": "5min mobilité\n3x10 WB @ 9kg\n2x2x12.5m Sled @ 180kg\n3x5 Burpees", "option_a": {"format": "10 rounds", "contenu": "500m Row @ intensité élevée\n15 Wall Balls @ 9kg\n45s repos", "notes": "Compromised WB après row. Objectif: <20min total."}, "option_b": {"format": "10 rounds", "contenu": "Alternate: 500m Row / 500m Ski\n15 Wall Balls @ 9kg\n45s repos", "notes": "Variation ergos."}, "cooldown": "5min étirements", "objectifs": "• Compromised WB: tenir 15 reps après row\n• Campus ~7h haute\n• Ischio devrait être OK maintenant"}, {"numero": 6, "dates": "26 Jan-1 Fév", "focus": "Focus: Sled OVERLOAD MAX + Lunges", "echauffement": "5min mobilité hanches\n3x2x12.5m Sled @ 180kg\n2x20m Lunges SANDBAG @ 24kg\n500m Row", "option_a": {"format": "5 rounds", "contenu": "4x12.5m Sled Push @ 240kg (PRO+38kg OVERLOAD!)\n4x12.5m Sled Pull @ 180kg (PRO+27kg)\n400m Run @ pace cible\n3min repos", "notes": "OVERLOAD MAXIMUM! Effort 90%. Sensation force."}, "option_b": {"format": "5 rounds", "contenu": "4x12.5m Sled Push @ 240kg\n4x12.5m Sled Pull @ 180kg\n500m Bike @ haute intensité\n2min30 repos", "notes": "Bike remplace run."}, "cooldown": "10min étirements jambes", "objectifs": "• Sled 240kg: confiance mentale\n• Campus ~8h haute\n• 202kg en course = \"léger\" après overload"}, {"numero": 7, "dates": "2-8 Fév", "focus": "Focus: Lunges Endurance + BBJ", "echauffement": "5min mobilité\n2x20m Lunges SANDBAG @ 24kg\n3x5 BBJ\n500m Row", "option_a": {"format": "EMOM 18min (6 rounds x 3min)", "contenu": "Min 1: 20m Lunges SANDBAG @ 30kg (poids pro)\nMin 2: 15 BBJ\nMin 3: 400m Run", "notes": "Focus lunges technique parfaite, BBJ distance constant."}, "option_b": {"format": "EMOM 18min", "contenu": "Min 1: 20m Lunges SANDBAG @ 30kg\nMin 2: 15 BBJ\nMin 3: 500m Row", "notes": "Row remplace run."}, "cooldown": "5min étirements", "objectifs": "• Lunges pro: posture 100m\n• Campus HAUTE ~9h\n• BBJ: distance >4.5m/rep"}, {"numero": 8, "dates": "9-15 Fév", "focus": "Focus: TEST + WB 100 reps", "echauffement": "10min échauffement complet\n2x15 WB @ 6kg\n3x5 WB @ 9kg", "option_a": {"format": "FOR TIME (Benchmark 2)", "contenu": "TEST 1: 100 Wall Balls @ 9kg FOR TIME\n(repos 5min)\nTEST 2: 80m BBJ FOR TIME\n(repos 5min)\nTEST 3: 4x12.5m Sled Push @ 202kg FOR TIME", "notes": "Tests isolés. Objectif: WB <4:15, BBJ <4min, Sled <3min."}, "option_b": {"format": "Même test", "contenu": "Identique", "notes": "Test intérieur."}, "cooldown": "10min récup", "objectifs": "• WB 100 reps: <4:15 = excellent\n• Campus DELOAD ~3h\n• Validation progression vs sem 4"}, {"numero": 9, "dates": "16-22 Fév", "focus": "Focus: WB Spécifique + Density", "echauffement": "5min mobilité\n3x10 WB @ 9kg\nActivation complète", "option_a": {"format": "12 rounds", "contenu": "400m Run @ pace Hyrox exact\n20 Wall Balls @ 9kg\n30s repos", "notes": "DENSITÉ MAX. Spécificité absolue. Effort 85%."}, "option_b": {"format": "12 rounds", "contenu": "Alternate: 500m Row / 500m Ski / 500m Bike\n20 Wall Balls @ 9kg\n30s repos", "notes": "Variation ergos."}, "cooldown": "5min étirements", "objectifs": "• WB: 20 reps constant 12 rounds\n• Campus HAUTE MAX ~11h\n• Run pace exact: 4:15/km"}, {"numero": 10, "dates": "23 Fév-1 Mars", "focus": "Focus: SIMULATION COMPLÈTE 1-8", "echauffement": "15min échauffement complet\nActivation légère toutes stations", "option_a": {"format": "STATIONS 1-8 (80% effort)", "contenu": "1km Run + 1000m Ski + 1km Run\n4x12.5m Sled Push @ 202kg + 1km Run\n4x12.5m Sled Pull @ 153kg + 1km Run\n80m BBJ + 1km Run\n1000m Row + 1km Run\n200m Farmers @ 2x32kg + 1km Run\n100m Lunges SANDBAG @ 30kg + 1km Run\n100 Wall Balls @ 9kg", "notes": "SIMULATION COMPLÈTE. Effort 80%. Objectif: 1h10-1h12."}, "option_b": {"format": "Même simulation", "contenu": "Identique", "notes": "Simulation complète intérieur."}, "cooldown": "15min récup active", "objectifs": "• Temps total: 1h10-1h12 = excellent\n• Campus ~9h\n• Valider stratégie pace + nutrition"}, {"numero": 11, "dates": "2-8 Mars", "focus": "Focus: TAPER - Technique légère", "echauffement": "10min mobilité complète\nActivation légère", "option_a": {"format": "Technique Légère (40min max)", "contenu": "3x15 WB @ 9kg (technique parfaite)\n3x4x12.5m Sled Push @ 150kg (vitesse)\n3x20m Lunges SANDBAG @ 24kg (posture)\n3x10 BBJ (distance)\n500m Row @ facile", "notes": "VOLUME MINIMAL. Technique > Intensité."}, "option_b": {"format": "Même", "contenu": "Identique", "notes": "Pas besoin alternative."}, "cooldown": "10min étirements doux", "objectifs": "• Maintenir connexion neuromusculaire\n• Campus ~4h descente\n• ZÉRO fatigue"}, {"numero": 12, "dates": "9-15 Mars", "focus": "Focus: TAPER - Activation minimale", "echauffement": "5min mobilité légère", "option_a": {"format": "Activation (30min max)", "contenu": "2x10 WB @ 6kg (rappel mouvement)\n2x2x12.5m Sled Push @ 120kg (vitesse)\n2x20m Lunges SANDBAG @ 20kg (rappel)\n5 BBJ (technique)", "notes": "DERNIÈRE SÉANCE. JEUDI 12 MARS max. Repos jusqu'à dim."}, "option_b": {"format": "SKIP", "contenu": "Repos complet si moindre doute", "notes": "Fraîcheur absolue prioritaire."}, "cooldown": "5min étirements légers", "objectifs": "• Rappel mouvements\n• Campus ~2.5h\n• Repos jeudi-samedi complet"}, {"numero": 13, "dates": "16-22 Mars", "focus": "Focus: RACE WEEK - Activation finale", "echauffement": "5min mobilité légère", "option_a": {"format": "Activation (20min max)", "contenu": "MARDI 17 ou MERCREDI 18:\n2x10 WB @ 6kg (rappel)\n2x2x12.5m Sled Push @ 120kg (vitesse)\n2x20m Lunges SANDBAG @ 20kg\n5 BBJ (technique)", "notes": "Activation mar 17 ou mer 18. OFF jeu-sam."}, "option_b": {"format": "SKIP", "contenu": "Repos complet si déjà frais", "notes": "Fraîcheur absolue = priorité."}, "cooldown": "5min étirements", "objectifs": "• Rappel final mouvements\n• Campus ~1.5h\n• 🔥 COURSE DIMANCHE 22 MARS 2026! 🔥"}], "campus": [{"numero": 1, "campus": "~3h"}, {"numero": 2, "campus": "~3h"}, {"numero": 3, "campus": "~7h"}, {"numero": 4, "campus": "~3h"}, {"numero": 5, "campus": "~7h"}, {"numero": 6, "campus": "~8h"}, {"numero": 7, "campus": "~9h"}, {"numero": 8, "campus": "~3h"}, {"numero": 9, "campus": "~11h"}, {"numero": 10, "campus": "~9h"}, {"numero": 11, "campus": "~4h"}, {"numero": 12, "campus": "~2.5h"}, {"numero": 13, "campus": "~1.5h"}]};
+        
+        let currentView = 'week';
+        let currentWeek = 0;
+        let currentFilter = 'all';
+        let completedSessions = loadCompletions();
+        
+        // LocalStorage management
+        function loadCompletions() {
+            const saved = localStorage.getItem('hyrox_completions');
+            return saved ? JSON.parse(saved) : {};
+        }
+        
+        function saveCompletions() {
+            localStorage.setItem('hyrox_completions', JSON.stringify(completedSessions));
+            updateStats();
+        }
+        
+        function toggleCompletion(weekNum, sessionType) {
+            const key = `w${weekNum}-${sessionType}`;
+            completedSessions[key] = !completedSessions[key];
+            saveCompletions();
+            showWeek(currentWeek);
+        }
+        
+        function isCompleted(weekNum, sessionType) {
+            const key = `w${weekNum}-${sessionType}`;
+            return !!completedSessions[key];
+        }
+        
+        // Update stats
+        function updateStats() {
+            const totalSessions = 13 * 3; // 13 weeks * 3 sessions
+            const completed = Object.values(completedSessions).filter(v => v).length;
+            const percentage = Math.round((completed / totalSessions) * 100);
+            
+            document.getElementById('completedSessions').textContent = completed;
+            document.getElementById('totalSessions').textContent = totalSessions;
+            document.getElementById('globalProgress').textContent = percentage;
+            document.getElementById('globalProgressBar').style.width = percentage + '%';
+            document.getElementById('currentWeek').textContent = currentWeek + 1;
+            
+            // Calculate training days
+            const startDate = new Date('2025-12-22');
+            const today = new Date();
+            const diffTime = today - startDate;
+            const diffDays = Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+            document.getElementById('trainingDays').textContent = diffDays;
+            
+            // Update week buttons
+            updateWeekButtons();
+        }
+        
+        // Update countdown
+        function updateCountdown() {
+            const raceDate = new Date('2026-03-22');
+            const today = new Date();
+            const diffTime = raceDate - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            document.getElementById('countdown').textContent = diffDays;
+        }
+        
+        // Switch view
+        function switchView(view) {
+            currentView = view;
+            document.querySelectorAll('.view-btn').forEach(btn => {
+                btn.classList.toggle('active', 
+                    (view === 'week' && btn.textContent.includes('Semaine')) ||
+                    (view === 'calendar' && btn.textContent.includes('Calendrier'))
+                );
+            });
+            
+            document.getElementById('calendarView').classList.toggle('active', view === 'calendar');
+            document.getElementById('weekContent').style.display = view === 'week' ? 'block' : 'none';
+            document.getElementById('filters').style.display = view === 'week' ? 'flex' : 'none';
+            document.getElementById('weekNav').style.display = view === 'week' ? 'flex' : 'none';
+            
+            if (view === 'calendar') {
+                renderCalendar();
+            }
+        }
+        
+        // Render calendar
+        function renderCalendar() {
+            const grid = document.getElementById('calendarGrid');
+            const week = trainingData.musculation[currentWeek];
+            
+            const days = [
+                { name: 'Lundi', sessions: ['Upper', 'Campus'] },
+                { name: 'Mardi', sessions: ['Hyrox'] },
+                { name: 'Mercredi', sessions: ['Campus'] },
+                { name: 'Jeudi', sessions: ['Lower', 'Campus'] },
+                { name: 'Vendredi', sessions: ['Campus'] },
+                { name: 'Samedi', sessions: ['Campus'] },
+                { name: 'Dimanche', sessions: ['Campus Long'] }
+            ];
+            
+            grid.innerHTML = days.map(day => `
+                <div class="calendar-day">
+                    <div class="day-header">
+                        <span class="day-name">${day.name}</span>
+                    </div>
+                    <div class="day-sessions">
+                        ${day.sessions.map(session => {
+                            let type = session.toLowerCase();
+                            if (type.includes('campus')) type = 'campus';
+                            return `
+                                <div class="day-session-item">
+                                    <div class="session-dot ${type}"></div>
+                                    ${session}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Filter sessions
+        function filterSessions(type) {
+            currentFilter = type;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                const btnType = btn.onclick.toString().match(/'(\w+)'/)[1];
+                btn.classList.toggle('active', btnType === type);
+            });
+            
+            document.querySelectorAll('.session-card').forEach(card => {
+                if (type === 'all') {
+                    card.classList.remove('hidden');
+                } else {
+                    const hasType = card.classList.contains(`session-${type}`);
+                    card.classList.toggle('hidden', !hasType);
+                }
+            });
+        }
+        
+        // Create week navigation
+        function createWeekNav() {
+            const nav = document.getElementById('weekNav');
+            trainingData.musculation.forEach((week, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'week-btn';
+                btn.innerHTML = `S${week.numero}<span class="completion-indicator"></span>`;
+                btn.onclick = () => {
+                    currentWeek = index;
+                    showWeek(index);
+                };
+                if (index === 0) btn.classList.add('active');
+                nav.appendChild(btn);
+            });
+        }
+        
+        // Update week buttons completion
+        function updateWeekButtons() {
+            const buttons = document.querySelectorAll('.week-btn');
+            buttons.forEach((btn, index) => {
+                const weekNum = index + 1;
+                const upperDone = isCompleted(weekNum, 'upper');
+                const lowerDone = isCompleted(weekNum, 'lower');
+                const hyroxDone = isCompleted(weekNum, 'hyrox');
+                
+                if (upperDone && lowerDone && hyroxDone) {
+                    btn.classList.add('completed');
+                } else {
+                    btn.classList.remove('completed');
+                }
+            });
+        }
+        
+        // Render exercises
+        function renderExercises(exercises) {
+            const blocs = {};
+            exercises.forEach(ex => {
+                if (!blocs[ex.bloc]) blocs[ex.bloc] = [];
+                blocs[ex.bloc].push(ex);
+            });
+            
+            let html = '';
+            for (const [bloc, exs] of Object.entries(blocs)) {
+                const blocClass = bloc.toLowerCase();
+                html += `
+                    <div class="bloc-section">
+                        <div class="bloc-title ${blocClass}">
+                            ${bloc === 'Force' ? '🔥' : '⚙️'} ${bloc}
+                        </div>
+                `;
+                
+                exs.forEach(ex => {
+                    html += `
+                        <div class="exercise">
+                            <div class="exercise-name">${ex.nom}</div>
+                            <div class="exercise-details">
+                                ${ex.series ? `
+                                    <div class="exercise-stat">
+                                        <span class="stat-label">Séries</span>
+                                        <span class="stat-value">${ex.series}</span>
+                                    </div>
+                                ` : ''}
+                                ${ex.charge ? `
+                                    <div class="exercise-stat">
+                                        <span class="stat-label">Charge</span>
+                                        <span class="stat-value">${ex.charge}</span>
+                                    </div>
+                                ` : ''}
+                            </div>
+                            ${ex.notes && ex.notes !== 'nan' ? `
+                                <div class="exercise-notes">💡 ${ex.notes}</div>
+                            ` : ''}
+                        </div>
+                    `;
+                });
+                
+                html += '</div>';
+            }
+            
+            return html;
+        }
+        
+        // Render Hyrox
+        function renderHyrox(hyrox) {
+            return `
+                <div class="hyrox-section">
+                    <div class="hyrox-section-title">🎯 Focus</div>
+                    <div class="hyrox-section-content">${hyrox.focus}</div>
+                </div>
+                
+                ${hyrox.echauffement ? `
+                    <div class="hyrox-section">
+                        <div class="hyrox-section-title">🔥 Échauffement</div>
+                        <div class="hyrox-section-content">${hyrox.echauffement}</div>
+                    </div>
+                ` : ''}
+                
+                ${hyrox.option_a.format ? `
+                    <div class="hyrox-section">
+                        <div class="hyrox-section-title">☀️ Option A (Beau temps)</div>
+                        <div class="hyrox-option">
+                            <div class="hyrox-option-header">Format: ${hyrox.option_a.format}</div>
+                            <div class="hyrox-option-content">${hyrox.option_a.contenu}</div>
+                            ${hyrox.option_a.notes ? `<div class="hyrox-option-content" style="margin-top: 8px; font-style: italic;">💡 ${hyrox.option_a.notes}</div>` : ''}
+                        </div>
+                    </div>
+                ` : ''}
+                
+                ${hyrox.option_b.format ? `
+                    <div class="hyrox-section">
+                        <div class="hyrox-section-title">🌧️ Option B (Pluie)</div>
+                        <div class="hyrox-option">
+                            <div class="hyrox-option-header">Format: ${hyrox.option_b.format}</div>
+                            <div class="hyrox-option-content">${hyrox.option_b.contenu}</div>
+                            ${hyrox.option_b.notes ? `<div class="hyrox-option-content" style="margin-top: 8px; font-style: italic;">💡 ${hyrox.option_b.notes}</div>` : ''}
+                        </div>
+                    </div>
+                ` : ''}
+                
+                ${hyrox.cooldown ? `
+                    <div class="hyrox-section">
+                        <div class="hyrox-section-title">❄️ Cool Down</div>
+                        <div class="hyrox-section-content">${hyrox.cooldown}</div>
+                    </div>
+                ` : ''}
+                
+                ${hyrox.objectifs ? `
+                    <div class="hyrox-section">
+                        <div class="hyrox-section-title">🎯 Objectifs</div>
+                        <div class="hyrox-section-content">${hyrox.objectifs}</div>
+                    </div>
+                ` : ''}
+            `;
+        }
+        
+        // Show specific week
+        function showWeek(index) {
+            document.querySelectorAll('.week-btn').forEach((btn, i) => {
+                btn.classList.toggle('active', i === index);
+            });
+            
+            const weekMuscu = trainingData.musculation[index];
+            const weekHyrox = trainingData.hyrox[index];
+            const weekNum = weekMuscu.numero;
+            
+            const upperCompleted = isCompleted(weekNum, 'upper');
+            const lowerCompleted = isCompleted(weekNum, 'lower');
+            const hyroxCompleted = isCompleted(weekNum, 'hyrox');
+            
+            const weekProgress = Math.round(
+                ([upperCompleted, lowerCompleted, hyroxCompleted].filter(Boolean).length / 3) * 100
+            );
+            
+            const content = document.getElementById('weekContent');
+            
+            content.innerHTML = `
+                <div class="week-display active">
+                    <div class="week-header">
+                        <div class="week-title">
+                            <h2>Semaine ${weekMuscu.numero}</h2>
+                            <span class="week-dates">${weekMuscu.dates}</span>
+                        </div>
+                        <div class="week-progress">
+                            <div class="week-progress-label">
+                                <span>Progression de la semaine</span>
+                                <span>${weekProgress}%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${weekProgress}%"></div>
+                            </div>
+                        </div>
+                        ${weekMuscu.notes && weekMuscu.notes !== 'nan' ? `
+                            <div class="week-notes">⚠️ ${weekMuscu.notes}</div>
+                        ` : ''}
+                    </div>
+                    
+                    <div class="sessions">
+                        <div class="session-card session-upper ${upperCompleted ? 'completed' : ''}">
+                            <div class="session-header">
+                                <div class="session-type">
+                                    <div class="session-icon upper">💪</div>
+                                    <span class="session-name">Upper Body</span>
+                                </div>
+                                <div class="session-actions">
+                                    <span class="session-badge">50-60min</span>
+                                    <div class="checkbox-container" onclick="toggleCompletion(${weekNum}, 'upper')">
+                                        <div class="checkbox ${upperCompleted ? 'checked' : ''}"></div>
+                                        <span class="checkbox-label">Fait</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="exercise-list">
+                                ${renderExercises(weekMuscu.upper)}
+                            </div>
+                        </div>
+                        
+                        <div class="session-card session-lower ${lowerCompleted ? 'completed' : ''}">
+                            <div class="session-header">
+                                <div class="session-type">
+                                    <div class="session-icon lower">🦵</div>
+                                    <span class="session-name">Lower Body</span>
+                                </div>
+                                <div class="session-actions">
+                                    <span class="session-badge">50-60min</span>
+                                    <div class="checkbox-container" onclick="toggleCompletion(${weekNum}, 'lower')">
+                                        <div class="checkbox ${lowerCompleted ? 'checked' : ''}"></div>
+                                        <span class="checkbox-label">Fait</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="exercise-list">
+                                ${renderExercises(weekMuscu.lower)}
+                            </div>
+                        </div>
+                        
+                        <div class="session-card session-hyrox ${hyroxCompleted ? 'completed' : ''}">
+                            <div class="session-header">
+                                <div class="session-type">
+                                    <div class="session-icon hyrox">⚡</div>
+                                    <span class="session-name">Hyrox Spécifique</span>
+                                </div>
+                                <div class="session-actions">
+                                    <span class="session-badge">60min max</span>
+                                    <div class="checkbox-container" onclick="toggleCompletion(${weekNum}, 'hyrox')">
+                                        <div class="checkbox ${hyroxCompleted ? 'checked' : ''}"></div>
+                                        <span class="checkbox-label">Fait</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="hyrox-content">
+                                ${renderHyrox(weekHyrox)}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            filterSessions(currentFilter);
+        }
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (currentView === 'week') {
+                if (e.key === 'ArrowLeft' && currentWeek > 0) {
+                    currentWeek--;
+                    showWeek(currentWeek);
+                } else if (e.key === 'ArrowRight' && currentWeek < 12) {
+                    currentWeek++;
+                    showWeek(currentWeek);
+                }
+            }
+        });
+        
+        // Initialize
+        updateCountdown();
+        createWeekNav();
+        showWeek(0);
+        updateStats();
+        
+        setInterval(updateCountdown, 3600000);
+    </script>
+</body>
+</html>
