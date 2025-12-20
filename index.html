@@ -1737,6 +1737,16 @@
                 const lines = optionData.contenu.split('\n').filter(line => line.trim());
                 config.exercises = lines;
                 }
+            // Detect TEST
+            else if (format.includes('test') || optionData.contenu.toLowerCase().includes('test')) {
+                config.type = 'test';
+            
+            // Simplifier affichage TAPER
+            if (format.toLowerCase().includes('taper')) {
+                config.exercises = ['TAPER - Activation'];
+            }
+                config.exercises = [optionData.contenu.split('\n')[0] || 'Test en cours'];
+            }
             }
             
             openTimer(config);
@@ -1899,7 +1909,7 @@
                 const exerciseIdx = currentMinute % currentTimerConfig.exercises.length;
                 document.getElementById('timerExercise').textContent = currentTimerConfig.exercises[exerciseIdx] || '';
                 document.getElementById('timerDetails').textContent = '';
-            } else if (currentTimerConfig.type === 'fortime') {
+            } else if (currentTimerConfig.type === 'fortime' || currentTimerConfig.type === 'test') {
                 document.getElementById('timerRound').textContent = `Round ${currentRound + 1}/${currentTimerConfig.totalRounds}`;
                 document.getElementById('timerMinute').textContent = '';
                 
@@ -1915,7 +1925,19 @@
                 if (currentTimerConfig.exercises && currentTimerConfig.exercises.length > 0) {
                     const exerciseList = currentTimerConfig.exercises.join(' • ');
                     document.getElementById('timerExercise').textContent = exerciseList;
+                
+            } else if (currentTimerConfig.type === 'test') {
+                document.getElementById('timerRound').textContent = '';
+                document.getElementById('timerMinute').textContent = '';
+                
+                // Afficher l'exercice du test
+                if (currentTimerConfig.exercises && currentTimerConfig.exercises.length > 0) {
+                    document.getElementById('timerExercise').textContent = currentTimerConfig.exercises[0];
                 } else {
+                    document.getElementById('timerExercise').textContent = 'Test en cours';
+                }
+                document.getElementById('timerDetails').textContent = '';
+            } else {
                     document.getElementById('timerExercise').textContent = 'AMRAP en cours';
                 }
                 document.getElementById('timerDetails').textContent = '';
@@ -1984,7 +2006,7 @@
                     </button>
                 `;
                 
-                if (currentTimerConfig.type === 'fortime') {
+                if (currentTimerConfig.type === 'fortime' || currentTimerConfig.type === 'test') {
                     html += `
                         <button class="timer-btn timer-btn-primary" onclick="completeRound()">
                             ✓ Tour fini
