@@ -1197,38 +1197,97 @@
         // Generate bell sound (simple sine wave)
         function initBellSound() {
             const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const duration = 0.3;
+            const duration = 0.6;
             const sampleRate = audioContext.sampleRate;
             const numSamples = duration * sampleRate;
             const buffer = audioContext.createBuffer(1, numSamples, sampleRate);
             const data = buffer.getChannelData(0);
             
+            // Cloche douce (La5 + harmonique)
             for (let i = 0; i < numSamples; i++) {
                 const t = i / sampleRate;
-                const freq = 800;
-                const envelope = Math.exp(-t * 8);
-                data[i] = Math.sin(2 * Math.PI * freq * t) * envelope * 0.3;
+                const envelope = Math.exp(-t * 5);
+                const freq1 = 880;  // La5
+                const freq2 = 1320; // Harmonique
+                data[i] = (
+                    Math.sin(2 * Math.PI * freq1 * t) * 0.6 +
+                    Math.sin(2 * Math.PI * freq2 * t) * 0.3
+                ) * envelope * 0.8; // Volume fort
             }
             
             window.bellBuffer = buffer;
             window.audioContext = audioContext;
+            window.audioEnabled = false;
+            
+            console.log('🔔 Audio initialisé');
         }
         
-        function playBell() {
-            if (!window.audioContext || !window.bellBuffer) return;
+        function enableAudio() {
+            if (!window.audioContext) {
+                console.error('❌ AudioContext non disponible');
+                return false;
+            }
             
-            const source = window.audioContext.createBufferSource();
-            source.buffer = window.bellBuffer;
-            source.connect(window.audioContext.destination);
-            source.start();
+            // Resume audio context
+            if (window.audioContext.state === 'suspended') {
+                window.audioContext.resume();
+            }
             
-            // Vibration
-            if (navigator.vibrate) {
-                navigator.vibrate(200);
+            // Play silent sound to unlock
+            try {
+                const source = window.audioContext.createBufferSource();
+                const silentBuffer = window.audioContext.createBuffer(1, 1, window.audioContext.sampleRate);
+                source.buffer = silentBuffer;
+                source.connect(window.audioContext.destination);
+                source.start();
+                
+                window.audioEnabled = true;
+                console.log('✅ Audio activé et débloqué');
+                return true;
+            } catch (e) {
+                console.error('❌ Erreur activation audio:', e);
+                return false;
             }
         }
         
-        // LocalStorage management
+        function playBell() {
+            if (!window.audioContext || !window.bellBuffer) {
+                console.error('❌ Audio non initialisé');
+                return;
+            }
+            
+            if (!window.audioEnabled) {
+                console.warn('⚠️  Audio non activé');
+                return;
+            }
+            
+            try {
+                const source = window.audioContext.createBufferSource();
+                source.buffer = window.bellBuffer;
+                const gainNode = window.audioContext.createGain();
+                gainNode.gain.value = 1.0;
+                source.connect(gainNode);
+                gainNode.connect(window.audioContext.destination);
+                source.start();
+                console.log('🔔 BIP -', new Date().toLocaleTimeString());
+            } catch (e) {
+                console.error('❌ Erreur playBell:', e);
+            }
+            
+            // Vibration
+            if (navigator.vibrate) {
+                navigator.vibrate([200, 100, 200]);
+            }
+            
+            // Flash visuel
+            const timerTime = document.getElementById('timerTime');
+            if (timerTime) {
+                timerTime.style.animation = 'pulse 0.3s ease-in-out';
+                setTimeout(() => { timerTime.style.animation = ''; }, 300);
+            }
+        }
+
+                // LocalStorage management
         function loadCompletions() {
             const saved = localStorage.getItem('hyrox_completions_v3');
             return saved ? JSON.parse(saved) : {};
@@ -1797,6 +1856,14 @@
         
         function startTimer() {
             if (timerInterval) return;
+            
+            // Vérifier si audio activé, sinon demander
+            if (!window.audioEnabled && currentTimerConfig.type === 'emom') {
+                const activate = confirm('🔊 Activer le son pour les bips EMOM ?\n\n(Recommandé pour entendre les changements de minute)');
+                if (activate) {
+                    enableAudio();
+                }
+            }
             
             timerStartTime = Date.now() - timerElapsed;
             timerPaused = false;
