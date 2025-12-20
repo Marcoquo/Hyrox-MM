@@ -1721,7 +1721,9 @@
                         config.restTime = (restMin * 60 + restSec) * 1000;
                     }
                     
-                    config.exercises = [optionData.contenu.split('\n')[0]];
+                    // Parser TOUS les exercices (pas juste la première ligne)
+                    const lines = optionData.contenu.split('\n').filter(line => line.trim());
+                    config.exercises = lines;
                 }
             }
             // Detect AMRAP
@@ -1730,6 +1732,10 @@
                 const match = format.match(/(\d+)min/i);
                 if (match) {
                     config.totalTime = parseInt(match[1]) * 60 * 1000;
+                
+                // Parser les exercices pour AMRAP
+                const lines = optionData.contenu.split('\n').filter(line => line.trim());
+                config.exercises = lines;
                 }
             }
             
@@ -1900,6 +1906,18 @@
                 // Afficher TOUS les exercices de la séance
                 const allExercises = currentTimerConfig.exercises.join(' + ');
                 document.getElementById('timerExercise').textContent = allExercises || 'FOR TIME';
+                document.getElementById('timerDetails').textContent = '';
+            } else if (currentTimerConfig.type === 'amrap') {
+                document.getElementById('timerRound').textContent = '';
+                document.getElementById('timerMinute').textContent = '';
+                
+                // Afficher tous les exercices de l'AMRAP
+                if (currentTimerConfig.exercises && currentTimerConfig.exercises.length > 0) {
+                    const exerciseList = currentTimerConfig.exercises.join(' • ');
+                    document.getElementById('timerExercise').textContent = exerciseList;
+                } else {
+                    document.getElementById('timerExercise').textContent = 'AMRAP en cours';
+                }
                 document.getElementById('timerDetails').textContent = '';
             } else {
                 document.getElementById('timerRound').textContent = '';
