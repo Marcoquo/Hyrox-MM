@@ -1066,20 +1066,6 @@
             }
         }
     </style>
-
-    <!-- PWA Meta Tags -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Hyrox Pro">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#00ff88">
-    
-    <!-- Manifest -->
-    <link rel="manifest" href="./manifest.json">
-    
-    <!-- Apple Touch Icon -->
-    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect fill='%230a0e14' width='512' height='512'/%3E%3Ctext x='256' y='340' font-size='280' text-anchor='middle' fill='%2300ff88' font-family='Arial,sans-serif' font-weight='bold'%3E⚡%3C/text%3E%3C/svg%3E">
-    
 </head>
 <body>
     <div class="container">
@@ -1241,38 +1227,6 @@
                 navigator.vibrate(200);
             }
         }
-        function playBellAndVibrate() {
-            // VIBRATION - TOUJOURS (même sans son)
-            if (navigator.vibrate) {
-                navigator.vibrate([200, 100, 200]);
-            }
-            
-            // SON - seulement si activé
-            if (window.audioEnabled && window.audioContext && window.bellBuffer) {
-                try {
-                    const source = window.audioContext.createBufferSource();
-                    source.buffer = window.bellBuffer;
-                    const gainNode = window.audioContext.createGain();
-                    gainNode.gain.value = 1.0;
-                    source.connect(gainNode);
-                    gainNode.connect(window.audioContext.destination);
-                    source.start();
-                    console.log('🔔 BIP -', new Date().toLocaleTimeString());
-                } catch (e) {
-                    console.error('❌ Erreur playBell:', e);
-                }
-            } else {
-                console.log('⚡ Vibration seule (son non activé)');
-            }
-            
-            // Flash visuel
-            const timerTime = document.getElementById('timerTime');
-            if (timerTime) {
-                timerTime.style.animation = 'pulse 0.3s ease-in-out';
-                setTimeout(() => { timerTime.style.animation = ''; }, 300);
-            }
-        }
-
         
         // LocalStorage management
         function loadCompletions() {
@@ -1828,24 +1782,6 @@
         function startTimer() {
             if (timerInterval) return;
             
-            // Demander activation son AVANT de démarrer le timer (non-bloquant)
-            if (!window.audioEnabled && currentTimerConfig.type === 'emom') {
-                // En mode PWA, activer automatiquement
-                if (window.isPWA) {
-                    setTimeout(() => enableAudio(), 100);
-                }
-                // En mode navigateur, demander (mais ne pas bloquer le timer)
-                else {
-                    setTimeout(() => {
-                        const activate = confirm('🔊 Activer le son pour les bips EMOM ?\n\n(Recommandé pour entendre les changements de minute)');
-                        if (activate) {
-                            enableAudio();
-                        }
-                    }, 500);
-                }
-            }
-            
-            // TOUJOURS démarrer le timer (ne pas attendre le son)
             timerStartTime = Date.now() - timerElapsed;
             timerPaused = false;
             
@@ -1914,7 +1850,7 @@
                 navigator.vibrate(200);
             }
             
-            playBellAndVibrate();
+            playBell();
             
             // Update history display
             updateRoundHistory();
@@ -1945,10 +1881,10 @@
                 if (newRound !== currentRound && newRound < currentTimerConfig.totalRounds) {
                     currentRound = newRound;
                     currentMinute = 0;
-                    playBellAndVibrate();
+                    playBell();
                 } else if (newMinute !== currentMinute) {
                     currentMinute = newMinute;
-                    playBellAndVibrate();
+                    playBell();
                 }
                 
                 document.getElementById('timerRound').textContent = `Round ${currentRound + 1}/${currentTimerConfig.totalRounds}`;
@@ -2215,30 +2151,5 @@
         
         setInterval(updateCountdown, 3600000);
     </script>
-
-    <!-- Service Worker Registration -->
-    <script>
-        // Enregistrer le Service Worker pour PWA
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./service-worker.js')
-                    .then(registration => {
-                        console.log('✅ Service Worker enregistré:', registration.scope);
-                    })
-                    .catch(error => {
-                        console.error('❌ Erreur Service Worker:', error);
-                    });
-            });
-        }
-        
-        // Détecter si lancé en mode PWA (standalone)
-        window.isPWA = window.matchMedia('(display-mode: standalone)').matches || 
-                       window.navigator.standalone === true;
-        
-        if (window.isPWA) {
-            console.log('🚀 App lancée en mode PWA');
-        }
-    </script>
-    
 </body>
 </html>
