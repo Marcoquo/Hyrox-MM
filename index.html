@@ -1796,18 +1796,24 @@
         function startTimer() {
             if (timerInterval) return;
             
-            // En mode PWA, activer le son automatiquement au premier démarrage
-            if (window.isPWA && !window.audioEnabled && currentTimerConfig.type === 'emom') {
-                enableAudio();
-            }
-            // En mode navigateur, demander confirmation
-            else if (!window.isPWA && !window.audioEnabled && currentTimerConfig.type === 'emom') {
-                const activate = confirm('🔊 Activer le son pour les bips EMOM ?\n\n(Recommandé pour entendre les changements de minute)');
-                if (activate) {
-                    enableAudio();
+            // Demander activation son AVANT de démarrer le timer (non-bloquant)
+            if (!window.audioEnabled && currentTimerConfig.type === 'emom') {
+                // En mode PWA, activer automatiquement
+                if (window.isPWA) {
+                    setTimeout(() => enableAudio(), 100);
+                }
+                // En mode navigateur, demander (mais ne pas bloquer le timer)
+                else {
+                    setTimeout(() => {
+                        const activate = confirm('🔊 Activer le son pour les bips EMOM ?\n\n(Recommandé pour entendre les changements de minute)');
+                        if (activate) {
+                            enableAudio();
+                        }
+                    }, 500);
                 }
             }
             
+            // TOUJOURS démarrer le timer (ne pas attendre le son)
             timerStartTime = Date.now() - timerElapsed;
             timerPaused = false;
             
