@@ -461,7 +461,7 @@
         }
         
         .checkbox.checked::after {
-            content: '✓';
+            content: 'âœ“';
             color: var(--bg-dark);
             font-weight: bold;
             font-size: 16px;
@@ -1066,19 +1066,33 @@
             }
         }
     </style>
+
+    <!-- PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Hyrox Pro">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#00ff88">
+    
+    <!-- Manifest -->
+    <link rel="manifest" href="./manifest.json">
+    
+    <!-- Apple Touch Icon -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect fill='%230a0e14' width='512' height='512'/%3E%3Ctext x='256' y='340' font-size='280' text-anchor='middle' fill='%2300ff88' font-family='Arial,sans-serif' font-weight='bold'%3Eâš¡%3C/text%3E%3C/svg%3E">
+    
 </head>
 <body>
     <div class="container">
         <header>
             <div class="header-top">
                 <div class="logo">
-                    ⚡ Hyrox Pro 
+                    âš¡ Hyrox Pro 
                     <span class="version-badge">V3 HYROX</span>
                 </div>
             </div>
-            <h1>Dashboard Entraînement</h1>
+            <h1>Dashboard EntraÃ®nement</h1>
             <div class="race-countdown">
-                📍 Toulouse · <span class="days" id="countdown">--</span> jours restants · 22 Mars 2026
+                ðŸ“ Toulouse Â· <span class="days" id="countdown">--</span> jours restants Â· 22 Mars 2026
             </div>
         </header>
         
@@ -1095,7 +1109,7 @@
                 </div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">Séances complétées</div>
+                <div class="stat-label">SÃ©ances complÃ©tÃ©es</div>
                 <div class="stat-value">
                     <span id="completedSessions">0</span>
                     <span class="stat-unit">/ <span id="totalSessions">39</span></span>
@@ -1109,7 +1123,7 @@
                 </div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">Séances Hyrox</div>
+                <div class="stat-label">SÃ©ances Hyrox</div>
                 <div class="stat-value">
                     <span id="hyroxCompleted">0</span>
                     <span class="stat-unit">/ 13</span>
@@ -1120,16 +1134,16 @@
         <!-- Filters -->
         <div class="filters" id="filters">
             <button class="filter-btn active" onclick="filterSessions('all')">
-                <span>📋</span> Tout
+                <span>ðŸ“‹</span> Tout
             </button>
             <button class="filter-btn" onclick="filterSessions('upper')">
-                <span>💪</span> Upper
+                <span>ðŸ’ª</span> Upper
             </button>
             <button class="filter-btn" onclick="filterSessions('lower')">
-                <span>🦵</span> Lower
+                <span>ðŸ¦µ</span> Lower
             </button>
             <button class="filter-btn" onclick="filterSessions('hyrox')">
-                <span>⚡</span> Hyrox
+                <span>âš¡</span> Hyrox
             </button>
         </div>
         
@@ -1140,14 +1154,14 @@
         <div id="weekContent"></div>
         
         <footer>
-            Programme 13 semaines · Hyrox Pro Toulouse 2026 · V3 HYROX EDITION
+            Programme 13 semaines Â· Hyrox Pro Toulouse 2026 Â· V3 HYROX EDITION
         </footer>
     </div>
     
     <!-- Timer Modal -->
     <div class="timer-modal" id="timerModal">
         <div class="timer-container" id="timerContainer">
-            <div class="timer-close" onclick="closeTimer()">✕</div>
+            <div class="timer-close" onclick="closeTimer()">âœ•</div>
             
             <div class="timer-info">
                 <div class="timer-week" id="timerWeek"></div>
@@ -1175,7 +1189,7 @@
     <audio id="bellSound" preload="auto"></audio>
     
     <script>
-        const trainingData = {"musculation": [{"numero": 1, "dates": "22-28 Déc", "notes": "Campus ~3h. ISCHIO: Skip squash, rameur→Bike/Ski finishers", "upper": [{"nom": "Bench Press Barre", "series": "4x5", "charge": "92kg", "notes": "Prog: +2kg sem précédente", "bloc": "Force"}, {"nom": "Cable Row Horizontal", "series": "4x6-8", "charge": "70kg", "notes": "Focus contraction dorsaux", "bloc": "Force"}, {"nom": "Développé Incliné Haltères", "series": "3x8", "charge": "2x28kg", "notes": "Tempo contrôlé", "bloc": "Force"}, {"nom": "Élévations Latérales", "series": "3x12", "charge": "2x10kg", "notes": "Épaules endurance (support WB)", "bloc": "Accessoires"}, {"nom": "Cable Pulldown", "series": "3x10", "charge": "60kg", "notes": "Sled Pull support", "bloc": "Accessoires"}, {"nom": "Face Pulls", "series": "3x15", "charge": "30kg", "notes": "Stabilité épaules", "bloc": "Accessoires"}], "lower": [{"nom": "Hip Thrust Machine", "series": "4x10", "charge": "70kg", "notes": "Prog: +5kg, remplace Trap Bar", "bloc": "Force"}, {"nom": "Back Squat", "series": "4x6", "charge": "92kg", "notes": "Rotation: Back cette semaine", "bloc": "Force"}, {"nom": "Squat Bulgare", "series": "3x8/jambe", "charge": "2x24kg", "notes": "Force unilatérale", "bloc": "Force"}, {"nom": "Lunges Pondérées HALTÈRES", "series": "3x20m", "charge": "2x24kg", "notes": "Force - Haltères muscu", "bloc": "Accessoires"}, {"nom": "Goblet Squat", "series": "3x12", "charge": "28kg", "notes": "WB endurance jambes", "bloc": "Accessoires"}, {"nom": "Broad Jumps", "series": "3x5", "charge": "Corps", "notes": "BBJ support - Distance max", "bloc": "Accessoires"}]}, {"numero": 2, "dates": "29 Déc-4 Jan", "notes": "Campus ~3h. ISCHIO: Toujours prudent rameur/squash", "upper": [{"nom": "Bench Press Barre", "series": "4x5", "charge": "94kg", "notes": "+2kg", "bloc": "Force"}, {"nom": "Tirage Horizontal Poulie", "series": "4x6-8", "charge": "73kg", "notes": "+3kg", "bloc": "Force"}, {"nom": "Développé Incliné Haltères", "series": "3x8", "charge": "2x30kg", "notes": "+2kg/haltère", "bloc": "Force"}, {"nom": "Développé Haltères Épaules", "series": "4x8", "charge": "2x20kg", "notes": "WB endurance", "bloc": "Accessoires"}, {"nom": "Tirage Vertical", "series": "3x10", "charge": "65kg", "notes": "+5kg", "bloc": "Accessoires"}, {"nom": "Élévations Postérieures", "series": "3x15", "charge": "2x8kg", "notes": "Stabilité", "bloc": "Accessoires"}], "lower": [{"nom": "Hip Thrust Machine", "series": "4x10", "charge": "75kg", "notes": "+5kg", "bloc": "Force"}, {"nom": "Back Squat", "series": "4x6", "charge": "95kg", "notes": "+3kg", "bloc": "Force"}, {"nom": "Squat Bulgare", "series": "3x8/jambe", "charge": "2x26kg", "notes": "+2kg/haltère", "bloc": "Force"}, {"nom": "Lunges Pondérées HALTÈRES", "series": "3x20m", "charge": "2x26kg", "notes": "+2kg progression", "bloc": "Accessoires"}, {"nom": "Goblet Squat", "series": "3x12", "charge": "30kg", "notes": "+2kg", "bloc": "Accessoires"}, {"nom": "Presse à Cuisse", "series": "3x10", "charge": "140kg", "notes": "Force pure", "bloc": "Accessoires"}]}, {"numero": 3, "dates": "5-11 Jan", "notes": "Campus HAUTE ~7h. Muscu DELOAD. Test squash léger fin sem?", "upper": [{"nom": "Bench Press Barre", "series": "3x5", "charge": "85kg", "notes": "Volume -20%, charge -10%", "bloc": "Force"}, {"nom": "Tirage Horizontal", "series": "3x6", "charge": "65kg", "notes": "Réduit", "bloc": "Force"}, {"nom": "Développé Incliné Haltères", "series": "3x6", "charge": "2x24kg", "notes": "Léger", "bloc": "Force"}, {"nom": "Élévations Latérales", "series": "3x10", "charge": "2x8kg", "notes": "Réduit", "bloc": "Accessoires"}, {"nom": "Cable Pulldown", "series": "3x8", "charge": "50kg", "notes": "Technique", "bloc": "Accessoires"}, {"nom": "Face Pulls", "series": "3x12", "charge": "25kg", "notes": "Léger", "bloc": "Accessoires"}], "lower": [{"nom": "Hip Thrust Machine", "series": "3x8", "charge": "65kg", "notes": "Volume -30%", "bloc": "Force"}, {"nom": "Front Squat", "series": "4x6", "charge": "75kg", "notes": "Rotation: Front, DÉCOUVERTE", "bloc": "Force"}, {"nom": "Squat Bulgare", "series": "3x6/jambe", "charge": "2x20kg", "notes": "Réduit", "bloc": "Force"}, {"nom": "Lunges HALTÈRES", "series": "2x20m", "charge": "2x24kg", "notes": "Volume réduit", "bloc": "Accessoires"}, {"nom": "Goblet Squat", "series": "3x10", "charge": "24kg", "notes": "Léger", "bloc": "Accessoires"}, {"nom": "SKIP Broad Jumps", "series": "", "charge": "", "notes": "Récup", "bloc": "Accessoires"}]}, {"numero": 4, "dates": "12-18 Jan", "notes": "Campus DELOAD ~3h. Test rameur 500m si ischio OK", "upper": [{"nom": "Bench Press Barre", "series": "4x5", "charge": "96kg", "notes": "Retour prog +2kg", "bloc": "Force"}, {"nom": "Cable Row", "series": "4x6-8", "charge": "76kg", "notes": "+3kg", "bloc": "Force"}, {"nom": "Développé Incliné Haltères", "series": "3x8", "charge": "2x32kg", "notes": "+2kg", "bloc": "Force"}, {"nom": "Développé Épaules", "series": "4x8", "charge": "2x22kg", "notes": "+2kg", "bloc": "Accessoires"}, {"nom": "Tirage Vertical", "series": "3x10", "charge": "68kg", "notes": "+3kg", "bloc": "Accessoires"}, {"nom": "Élévations Frontales", "series": "3x12", "charge": "2x10kg", "notes": "Nouveau", "bloc": "Accessoires"}], "lower": [{"nom": "Hip Thrust Machine", "series": "4x10", "charge": "80kg", "notes": "+5kg fort", "bloc": "Force"}, {"nom": "Front Squat", "series": "4x8", "charge": "80kg", "notes": "Prog +5kg", "bloc": "Force"}, {"nom": "Squat Bulgare", "series": "3x8/jambe", "charge": "2x28kg", "notes": "+2kg", "bloc": "Force"}, {"nom": "Lunges HALTÈRES", "series": "3x20m", "charge": "2x28kg", "notes": "+2kg", "bloc": "Accessoires"}, {"nom": "Goblet Squat", "series": "3x12", "charge": "32kg", "notes": "+2kg", "bloc": "Accessoires"}, {"nom": "Broad Jumps", "series": "4x5", "charge": "Corps", "notes": "+1 série", "bloc": "Accessoires"}]}, {"numero": 5, "dates": "19-25 Jan", "notes": "Campus ~7h haute. Ischio devrait être OK maintenant", "upper": [{"nom": "Bench Press Barre", "series": "5x5", "charge": "98kg", "notes": "Volume +25%, +2kg", "bloc": "Force"}, {"nom": "Tirage Horizontal", "series": "4x6", "charge": "80kg", "notes": "+4kg, reps -2", "bloc": "Force"}, {"nom": "Développé Incliné Haltères", "series": "4x6", "charge": "2x34kg", "notes": "+2kg", "bloc": "Force"}, {"nom": "Développé Épaules", "series": "4x8", "charge": "2x24kg", "notes": "+2kg", "bloc": "Accessoires"}, {"nom": "Cable Pulldown", "series": "3x8", "charge": "70kg", "notes": "Lourd", "bloc": "Accessoires"}, {"nom": "Écartés Pectoraux Poulie", "series": "3x12", "charge": "15kg", "notes": "Nouveau", "bloc": "Accessoires"}], "lower": [{"nom": "Hip Thrust Machine", "series": "5x10", "charge": "85kg", "notes": "Volume +25%", "bloc": "Force"}, {"nom": "Back Squat", "series": "5x5", "charge": "98kg", "notes": "Rotation: Back, +3kg", "bloc": "Force"}, {"nom": "Squat Bulgare", "series": "4x8/jambe", "charge": "2x30kg", "notes": "+2kg", "bloc": "Force"}, {"nom": "Lunges HALTÈRES", "series": "4x20m", "charge": "2x28kg", "notes": "Volume +33%", "bloc": "Accessoires"}, {"nom": "Hack Squat", "series": "3x8", "charge": "100kg", "notes": "Nouveau - Force", "bloc": "Accessoires"}, {"nom": "Broad Jumps", "series": "4x5", "charge": "Corps", "notes": "Constance", "bloc": "Accessoires"}]}, {"numero": 6, "dates": "26 Jan-1 Fév", "notes": "Campus ~8h haute. PRO! 100kg bench/squat. Lunges lourdes!", "upper": [{"nom": "Bench Press Barre", "series": "5x5", "charge": "100kg", "notes": "+2kg - 100kg atteint!", "bloc": "Force"}, {"nom": "Cable Row", "series": "5x6", "charge": "83kg", "notes": "+3kg", "bloc": "Force"}, {"nom": "Développé Couché Haltères", "series": "4x8", "charge": "2x40kg", "notes": "Variante", "bloc": "Force"}, {"nom": "Développé Épaules", "series": "5x6", "charge": "2x26kg", "notes": "Lourd -2 reps", "bloc": "Accessoires"}, {"nom": "Tirage Bûcheron", "series": "3x10/bras", "charge": "36kg", "notes": "Unilatéral", "bloc": "Accessoires"}, {"nom": "Face Pulls", "series": "4x15", "charge": "35kg", "notes": "+5kg", "bloc": "Accessoires"}], "lower": [{"nom": "Hip Thrust Machine", "series": "5x10", "charge": "90kg", "notes": "+5kg", "bloc": "Force"}, {"nom": "Back Squat", "series": "5x5", "charge": "100kg", "notes": "+2kg - 100kg!", "bloc": "Force"}, {"nom": "Squat Bulgare", "series": "4x8/jambe", "charge": "2x32kg", "notes": "+2kg", "bloc": "Force"}, {"nom": "Lunges HALTÈRES", "series": "4x20m", "charge": "2x30kg", "notes": "+2kg - Lourd!", "bloc": "Accessoires"}, {"nom": "Goblet Squat", "series": "4x10", "charge": "36kg", "notes": "+4kg lourd", "bloc": "Accessoires"}, {"nom": "Leg Extension", "series": "3x15", "charge": "60kg", "notes": "Finition quads", "bloc": "Accessoires"}]}, {"numero": 7, "dates": "2-8 Fév", "notes": "Campus HAUTE ~9h. Muscu DELOAD. Récup avant pic", "upper": [{"nom": "Bench Press Barre", "series": "3x5", "charge": "90kg", "notes": "Volume -40%, charge -10%", "bloc": "Force"}, {"nom": "Tirage Horizontal", "series": "3x6", "charge": "75kg", "notes": "Réduit", "bloc": "Force"}, {"nom": "Développé Incliné Haltères", "series": "3x6", "charge": "2x28kg", "notes": "Léger", "bloc": "Force"}, {"nom": "Élévations Latérales", "series": "3x10", "charge": "2x10kg", "notes": "Technique", "bloc": "Accessoires"}, {"nom": "Cable Pulldown", "series": "3x8", "charge": "55kg", "notes": "Léger", "bloc": "Accessoires"}, {"nom": "Pompes", "series": "3x10", "charge": "Corps", "notes": "Bodyweight", "bloc": "Accessoires"}], "lower": [{"nom": "Hip Thrust Machine", "series": "3x8", "charge": "75kg", "notes": "Volume -40%", "bloc": "Force"}, {"nom": "Front Squat", "series": "4x6", "charge": "85kg", "notes": "Rotation: Front, +5kg", "bloc": "Force"}, {"nom": "Squat Bulgare", "series": "3x6/jambe", "charge": "2x24kg", "notes": "Réduit", "bloc": "Force"}, {"nom": "Lunges HALTÈRES", "series": "2x20m", "charge": "2x28kg", "notes": "Volume réduit", "bloc": "Accessoires"}, {"nom": "Goblet Squat", "series": "3x8", "charge": "28kg", "notes": "Léger", "bloc": "Accessoires"}, {"nom": "SKIP Broad Jumps", "series": "", "charge": "", "notes": "Récup", "bloc": "Accessoires"}]}, {"numero": 8, "dates": "9-15 Fév", "notes": "Campus DELOAD ~3h. Test Hyrox WB prioritaire", "upper": [{"nom": "Bench Press Barre", "series": "5x4", "charge": "103kg", "notes": "Test +3kg, reps -1", "bloc": "Force"}, {"nom": "Cable Row", "series": "5x6", "charge": "85kg", "notes": "+2kg", "bloc": "Force"}, {"nom": "Développé Incliné Barre", "series": "4x6", "charge": "75kg", "notes": "Barre variante", "bloc": "Force"}, {"nom": "Développé Épaules", "series": "5x6", "charge": "2x28kg", "notes": "+2kg", "bloc": "Accessoires"}, {"nom": "Tirage Vertical", "series": "4x8", "charge": "72kg", "notes": "+4kg", "bloc": "Accessoires"}, {"nom": "Élévations Postérieures", "series": "4x12", "charge": "2x10kg", "notes": "+2kg", "bloc": "Accessoires"}], "lower": [{"nom": "Hip Thrust Machine", "series": "5x10", "charge": "95kg", "notes": "+5kg test", "bloc": "Force"}, {"nom": "Front Squat", "series": "5x6", "charge": "88kg", "notes": "+3kg", "bloc": "Force"}, {"nom": "Squat Bulgare", "series": "4x8/jambe", "charge": "2x34kg", "notes": "+2kg", "bloc": "Force"}, {"nom": "Lunges HALTÈRES", "series": "4x20m", "charge": "2x30kg", "notes": "Maintien lourd", "bloc": "Accessoires"}, {"nom": "Presse à Cuisse", "series": "4x8", "charge": "160kg", "notes": "+20kg lourd", "bloc": "Accessoires"}, {"nom": "Broad Jumps", "series": "4x5", "charge": "Corps", "notes": "Test", "bloc": "Accessoires"}]}, {"numero": 9, "dates": "16-22 Fév", "notes": "Campus HAUTE MAX ~11h. Pic force muscu", "upper": [{"nom": "Bench Press Barre", "series": "4x4", "charge": "105kg", "notes": "Pic force +2kg", "bloc": "Force"}, {"nom": "Tirage Horizontal", "series": "5x5", "charge": "88kg", "notes": "Force max", "bloc": "Force"}, {"nom": "Développé Incliné Haltères", "series": "4x6", "charge": "2x36kg", "notes": "+2kg", "bloc": "Force"}, {"nom": "Développé Épaules", "series": "5x5", "charge": "2x30kg", "notes": "Lourd WB prep", "bloc": "Accessoires"}, {"nom": "Cable Pulldown", "series": "4x6", "charge": "75kg", "notes": "Sled Pull force", "bloc": "Accessoires"}, {"nom": "Face Pulls", "series": "4x15", "charge": "40kg", "notes": "+5kg", "bloc": "Accessoires"}], "lower": [{"nom": "Hip Thrust Machine", "series": "5x8", "charge": "100kg", "notes": "+5kg pic", "bloc": "Force"}, {"nom": "Back Squat", "series": "4x4", "charge": "103kg", "notes": "Rotation: Back, +3kg force", "bloc": "Force"}, {"nom": "Squat Bulgare", "series": "4x6/jambe", "charge": "2x36kg", "notes": "+2kg lourd", "bloc": "Force"}, {"nom": "Lunges HALTÈRES", "series": "5x20m", "charge": "2x30kg", "notes": "Volume max lourd", "bloc": "Accessoires"}, {"nom": "Goblet Squat", "series": "4x8", "charge": "40kg", "notes": "+4kg", "bloc": "Accessoires"}, {"nom": "Leg Extension", "series": "4x12", "charge": "70kg", "notes": "+10kg", "bloc": "Accessoires"}]}, {"numero": 10, "dates": "23 Fév-1 Mars", "notes": "Campus ~9h. Simulation Hyrox = PRIORITÉ ABSOLUE", "upper": [{"nom": "Bench Press Barre", "series": "4x3", "charge": "107kg", "notes": "+2kg", "bloc": "Force"}, {"nom": "Cable Row", "series": "5x5", "charge": "90kg", "notes": "+2kg", "bloc": "Force"}, {"nom": "Développé Couché Haltères", "series": "4x6", "charge": "2x42kg", "notes": "+2kg", "bloc": "Force"}, {"nom": "Développé Épaules", "series": "4x6", "charge": "2x30kg", "notes": "Maintien", "bloc": "Accessoires"}, {"nom": "Tirage Bûcheron", "series": "4x8/bras", "charge": "38kg", "notes": "+2kg", "bloc": "Accessoires"}, {"nom": "Élévations Latérales", "series": "4x10", "charge": "2x12kg", "notes": "+2kg", "bloc": "Accessoires"}], "lower": [{"nom": "Hip Thrust Machine", "series": "4x8", "charge": "105kg", "notes": "+5kg", "bloc": "Force"}, {"nom": "Back Squat", "series": "4x3", "charge": "105kg", "notes": "+2kg pic", "bloc": "Force"}, {"nom": "Squat Bulgare", "series": "4x6/jambe", "charge": "2x38kg", "notes": "+2kg", "bloc": "Force"}, {"nom": "Lunges HALTÈRES", "series": "4x20m", "charge": "2x30kg", "notes": "Maintien", "bloc": "Accessoires"}, {"nom": "Hack Squat", "series": "4x6", "charge": "120kg", "notes": "+20kg", "bloc": "Accessoires"}, {"nom": "Broad Jumps", "series": "5x5", "charge": "Corps", "notes": "Max volume", "bloc": "Accessoires"}]}, {"numero": 11, "dates": "2-8 Mars", "notes": "Campus ~4h descente. TAPER. Fraîcheur prioritaire", "upper": [{"nom": "Bench Press Barre", "series": "3x3", "charge": "95kg", "notes": "Volume -50%, charge -12kg", "bloc": "Force"}, {"nom": "Tirage Horizontal", "series": "3x5", "charge": "80kg", "notes": "Réduit", "bloc": "Force"}, {"nom": "Développé Incliné Haltères", "series": "3x5", "charge": "2x30kg", "notes": "Léger", "bloc": "Force"}, {"nom": "Développé Épaules", "series": "3x6", "charge": "2x24kg", "notes": "Technique", "bloc": "Accessoires"}, {"nom": "Cable Pulldown", "series": "3x6", "charge": "60kg", "notes": "Léger", "bloc": "Accessoires"}, {"nom": "SKIP Face Pulls", "series": "", "charge": "", "notes": "Minimal", "bloc": "Accessoires"}], "lower": [{"nom": "Hip Thrust Machine", "series": "3x6", "charge": "85kg", "notes": "Volume -50%", "bloc": "Force"}, {"nom": "Front Squat", "series": "3x5", "charge": "90kg", "notes": "Rotation: Front, technique", "bloc": "Force"}, {"nom": "Squat Bulgare", "series": "3x5/jambe", "charge": "2x28kg", "notes": "Léger", "bloc": "Force"}, {"nom": "Lunges HALTÈRES", "series": "2x20m", "charge": "2x28kg", "notes": "Technique", "bloc": "Accessoires"}, {"nom": "Goblet Squat", "series": "3x6", "charge": "32kg", "notes": "Léger", "bloc": "Accessoires"}, {"nom": "SKIP Broad Jumps", "series": "", "charge": "", "notes": "Fraîcheur", "bloc": "Accessoires"}]}, {"numero": 12, "dates": "9-15 Mars", "notes": "Campus ~2.5h. Dernière séance JEUDI 12 MARS max", "upper": [{"nom": "Bench Press Barre", "series": "2x3", "charge": "90kg", "notes": "Activation neurale", "bloc": "Force"}, {"nom": "Tirage Horizontal", "series": "2x5", "charge": "75kg", "notes": "Léger", "bloc": "Force"}, {"nom": "Développé Incliné Haltères", "series": "2x5", "charge": "2x28kg", "notes": "Activation", "bloc": "Force"}, {"nom": "Développé Épaules", "series": "2x6", "charge": "2x20kg", "notes": "Technique", "bloc": "Accessoires"}, {"nom": "SKIP reste", "series": "", "charge": "", "notes": "Minimal", "bloc": "Accessoires"}], "lower": [{"nom": "Hip Thrust Machine", "series": "2x5", "charge": "80kg", "notes": "Activation", "bloc": "Force"}, {"nom": "Back Squat", "series": "2x3", "charge": "95kg", "notes": "Rotation: Back, neural", "bloc": "Force"}, {"nom": "Squat Bulgare", "series": "2x5/jambe", "charge": "2x24kg", "notes": "Technique", "bloc": "Force"}, {"nom": "Lunges HALTÈRES", "series": "1x20m", "charge": "2x24kg", "notes": "Rappel technique", "bloc": "Accessoires"}, {"nom": "SKIP reste", "series": "", "charge": "", "notes": "Fraîcheur absolue", "bloc": "Accessoires"}]}, {"numero": 13, "dates": "16-22 Mars", "notes": "Campus ~1.5h. Activation MAR 17. OFF MER-SAM. 🔥 COURSE DIM 22!", "upper": [{"nom": "Bench Press Barre", "series": "2x3", "charge": "90kg", "notes": "MARDI 17: Activation légère", "bloc": "Force"}, {"nom": "Tirage Horizontal", "series": "2x5", "charge": "75kg", "notes": "Rappel mouvement", "bloc": "Force"}, {"nom": "Mobilité", "series": "10min", "charge": "", "notes": "Épaules + dos", "bloc": "Force"}, {"nom": "SKIP", "series": "", "charge": "", "notes": "Repos absolue", "bloc": "Accessoires"}], "lower": [{"nom": "Hip Thrust Machine", "series": "2x5", "charge": "80kg", "notes": "MARDI 17: Activation", "bloc": "Force"}, {"nom": "Back Squat", "series": "2x3", "charge": "95kg", "notes": "Rappel mouvement", "bloc": "Force"}, {"nom": "Mobilité", "series": "10min", "charge": "", "notes": "Hanches + chevilles", "bloc": "Force"}, {"nom": "Lunges HALTÈRES", "series": "1x20m", "charge": "2x20kg", "notes": "Rappel léger", "bloc": "Accessoires"}, {"nom": "SKIP reste", "series": "", "charge": "", "notes": "Repos", "bloc": "Accessoires"}]}], "hyrox": [{"numero": 1, "dates": "22-28 Déc", "focus": "Focus: WB Technique + Adaptation", "echauffement": "5min mobilité (hanches, épaules, chevilles)\n3x5 Broad Jumps (sans burpee)\n3x3 BBJ (technique)\n2x10 WB @ 6kg", "option_a": {"format": "EMOM 24min (8 rounds x 3min)", "contenu": "Min 1: 15 Wall Balls @ 9kg\nMin 2: 20m Lunges SANDBAG @ 28kg\nMin 3: 20 KB Swings @ 24kg", "notes": "Focus technique WB parfaite. Rythme constant."}, "option_b": {"format": "EMOM 24min (8 rounds x 3min)", "contenu": "Min 1: 15 Wall Balls @ 9kg\nMin 2: 250m Row @ modéré\nMin 3: 20 KB Swings @ 24kg", "notes": "Row remplace lunges si pluie. Même objectif technique."}, "cooldown": "5min étirements (quadriceps, épaules, dos)", "objectifs": "• Technique WB parfaite (squat profond, lancer fluide)\n• Campus ~3h bas\n• ISCHIO: Ski OK, pas rameur. Skip squash."}, {"numero": 2, "dates": "29 Déc-4 Jan", "focus": "Focus: Sled Push Overload + BBJ", "echauffement": "5min mobilité\n3x2x12.5m Sled Push @ 150kg\n3x3 BBJ\n500m Row @ facile", "option_a": {"format": "5 rounds FOR TIME", "contenu": "4x12.5m Sled Push @ 210kg (pro+8kg)\n400m Run @ pace Hyrox (~4:15/km)\n2min30 repos entre rounds", "notes": "Objectif: <20min total. Sled: puissance, run: pace."}, "option_b": {"format": "5 rounds FOR TIME", "contenu": "4x12.5m Sled Push @ 210kg\n500m Row @ intensité élevée\n2min repos entre rounds", "notes": "Row remplace run, intensité similaire."}, "cooldown": "5min mobilité hanches + quadriceps", "objectifs": "• Overload sled +8kg\n• Campus ~3h bas\n• ISCHIO: Toujours prudent rameur/squash"}, {"numero": 3, "dates": "5-11 Jan", "focus": "Focus: WB Endurance + Mix stations", "echauffement": "5min mobilité\n3x10 WB @ 6kg\n2x15 WB @ 9kg\n500m Ski @ facile", "option_a": {"format": "AMRAP 30min", "contenu": "30 Wall Balls @ 9kg\n100m Farmers @ 2x32kg (overload)\n20 Burpees\n400m Run", "notes": "Objectif: >4 rounds. Pas pause WB, farmers unbroken."}, "option_b": {"format": "AMRAP 30min", "contenu": "30 Wall Balls @ 9kg\n100m Farmers @ 2x32kg\n20 Burpees\n500m Ski", "notes": "Ski remplace run."}, "cooldown": "5min étirements épaules + grip", "objectifs": "• WB endurance 30 reps sans casser\n• Campus HAUTE ~7h\n• Test squash léger fin semaine?"}, {"numero": 4, "dates": "12-18 Jan", "focus": "Focus: TEST STATIONS (Baseline)", "echauffement": "10min échauffement complet\nActivation toutes stations légères", "option_a": {"format": "FOR TIME (Baseline)", "contenu": "1000m SkiErg\n4x12.5m Sled Push @ 202kg (poids pro exact)\n4x12.5m Sled Pull @ 153kg (poids pro exact)\n80m Burpee Broad Jump\n1000m Row", "notes": "CHRONO TOTAL. Baseline référence. Effort 85%."}, "option_b": {"format": "Même test", "contenu": "Identique Option A", "notes": "Test intérieur, pas besoin alternative."}, "cooldown": "10min récup active + mobilité", "objectifs": "• Temps total: ~18-20min objectif\n• Campus DELOAD ~3h\n• Test rameur 500m si ischio OK"}, {"numero": 5, "dates": "19-25 Jan", "focus": "Focus: WB + Sled Push Compromised", "echauffement": "5min mobilité\n3x10 WB @ 9kg\n2x2x12.5m Sled @ 180kg\n3x5 Burpees", "option_a": {"format": "10 rounds", "contenu": "500m Row @ intensité élevée\n15 Wall Balls @ 9kg\n45s repos", "notes": "Compromised WB après row. Objectif: <20min total."}, "option_b": {"format": "10 rounds", "contenu": "Alternate: 500m Row / 500m Ski\n15 Wall Balls @ 9kg\n45s repos", "notes": "Variation ergos."}, "cooldown": "5min étirements", "objectifs": "• Compromised WB: tenir 15 reps après row\n• Campus ~7h haute\n• Ischio devrait être OK maintenant"}, {"numero": 6, "dates": "26 Jan-1 Fév", "focus": "Focus: Sled OVERLOAD MAX + Lunges", "echauffement": "5min mobilité hanches\n3x2x12.5m Sled @ 180kg\n2x20m Lunges SANDBAG @ 24kg\n500m Row", "option_a": {"format": "5 rounds", "contenu": "4x12.5m Sled Push @ 240kg (PRO+38kg OVERLOAD!)\n4x12.5m Sled Pull @ 180kg (PRO+27kg)\n400m Run @ pace cible\n3min repos", "notes": "OVERLOAD MAXIMUM! Effort 90%. Sensation force."}, "option_b": {"format": "5 rounds", "contenu": "4x12.5m Sled Push @ 240kg\n4x12.5m Sled Pull @ 180kg\n500m Bike @ haute intensité\n2min30 repos", "notes": "Bike remplace run."}, "cooldown": "10min étirements jambes", "objectifs": "• Sled 240kg: confiance mentale\n• Campus ~8h haute\n• 202kg en course = \"léger\" après overload"}, {"numero": 7, "dates": "2-8 Fév", "focus": "Focus: Lunges Endurance + BBJ", "echauffement": "5min mobilité\n2x20m Lunges SANDBAG @ 24kg\n3x5 BBJ\n500m Row", "option_a": {"format": "EMOM 18min (6 rounds x 3min)", "contenu": "Min 1: 20m Lunges SANDBAG @ 30kg (poids pro)\nMin 2: 15 BBJ\nMin 3: 400m Run", "notes": "Focus lunges technique parfaite, BBJ distance constant."}, "option_b": {"format": "EMOM 18min", "contenu": "Min 1: 20m Lunges SANDBAG @ 30kg\nMin 2: 15 BBJ\nMin 3: 500m Row", "notes": "Row remplace run."}, "cooldown": "5min étirements", "objectifs": "• Lunges pro: posture 100m\n• Campus HAUTE ~9h\n• BBJ: distance >4.5m/rep"}, {"numero": 8, "dates": "9-15 Fév", "focus": "Focus: TEST + WB 100 reps", "echauffement": "10min échauffement complet\n2x15 WB @ 6kg\n3x5 WB @ 9kg", "option_a": {"format": "FOR TIME (Benchmark 2)", "contenu": "TEST 1: 100 Wall Balls @ 9kg FOR TIME\n(repos 5min)\nTEST 2: 80m BBJ FOR TIME\n(repos 5min)\nTEST 3: 4x12.5m Sled Push @ 202kg FOR TIME", "notes": "Tests isolés. Objectif: WB <4:15, BBJ <4min, Sled <3min."}, "option_b": {"format": "Même test", "contenu": "Identique", "notes": "Test intérieur."}, "cooldown": "10min récup", "objectifs": "• WB 100 reps: <4:15 = excellent\n• Campus DELOAD ~3h\n• Validation progression vs sem 4"}, {"numero": 9, "dates": "16-22 Fév", "focus": "Focus: WB Spécifique + Density", "echauffement": "5min mobilité\n3x10 WB @ 9kg\nActivation complète", "option_a": {"format": "12 rounds", "contenu": "400m Run @ pace Hyrox exact\n20 Wall Balls @ 9kg\n30s repos", "notes": "DENSITÉ MAX. Spécificité absolue. Effort 85%."}, "option_b": {"format": "12 rounds", "contenu": "Alternate: 500m Row / 500m Ski / 500m Bike\n20 Wall Balls @ 9kg\n30s repos", "notes": "Variation ergos."}, "cooldown": "5min étirements", "objectifs": "• WB: 20 reps constant 12 rounds\n• Campus HAUTE MAX ~11h\n• Run pace exact: 4:15/km"}, {"numero": 10, "dates": "23 Fév-1 Mars", "focus": "Focus: SIMULATION COMPLÈTE 1-8", "echauffement": "15min échauffement complet\nActivation légère toutes stations", "option_a": {"format": "STATIONS 1-8 (80% effort)", "contenu": "1km Run + 1000m Ski + 1km Run\n4x12.5m Sled Push @ 202kg + 1km Run\n4x12.5m Sled Pull @ 153kg + 1km Run\n80m BBJ + 1km Run\n1000m Row + 1km Run\n200m Farmers @ 2x32kg + 1km Run\n100m Lunges SANDBAG @ 30kg + 1km Run\n100 Wall Balls @ 9kg", "notes": "SIMULATION COMPLÈTE. Effort 80%. Objectif: 1h10-1h12."}, "option_b": {"format": "Même simulation", "contenu": "Identique", "notes": "Simulation complète intérieur."}, "cooldown": "15min récup active", "objectifs": "• Temps total: 1h10-1h12 = excellent\n• Campus ~9h\n• Valider stratégie pace + nutrition"}, {"numero": 11, "dates": "2-8 Mars", "focus": "Focus: TAPER - Technique légère", "echauffement": "10min mobilité complète\nActivation légère", "option_a": {"format": "Technique Légère (40min max)", "contenu": "3x15 WB @ 9kg (technique parfaite)\n3x4x12.5m Sled Push @ 150kg (vitesse)\n3x20m Lunges SANDBAG @ 24kg (posture)\n3x10 BBJ (distance)\n500m Row @ facile", "notes": "VOLUME MINIMAL. Technique > Intensité."}, "option_b": {"format": "Même", "contenu": "Identique", "notes": "Pas besoin alternative."}, "cooldown": "10min étirements doux", "objectifs": "• Maintenir connexion neuromusculaire\n• Campus ~4h descente\n• ZÉRO fatigue"}, {"numero": 12, "dates": "9-15 Mars", "focus": "Focus: TAPER - Activation minimale", "echauffement": "5min mobilité légère", "option_a": {"format": "Activation (30min max)", "contenu": "2x10 WB @ 6kg (rappel mouvement)\n2x2x12.5m Sled Push @ 120kg (vitesse)\n2x20m Lunges SANDBAG @ 20kg (rappel)\n5 BBJ (technique)", "notes": "DERNIÈRE SÉANCE. JEUDI 12 MARS max. Repos jusqu'à dim."}, "option_b": {"format": "SKIP", "contenu": "Repos complet si moindre doute", "notes": "Fraîcheur absolue prioritaire."}, "cooldown": "5min étirements légers", "objectifs": "• Rappel mouvements\n• Campus ~2.5h\n• Repos jeudi-samedi complet"}, {"numero": 13, "dates": "16-22 Mars", "focus": "Focus: RACE WEEK - Activation finale", "echauffement": "5min mobilité légère", "option_a": {"format": "Activation (20min max)", "contenu": "MARDI 17 ou MERCREDI 18:\n2x10 WB @ 6kg (rappel)\n2x2x12.5m Sled Push @ 120kg (vitesse)\n2x20m Lunges SANDBAG @ 20kg\n5 BBJ (technique)", "notes": "Activation mar 17 ou mer 18. OFF jeu-sam."}, "option_b": {"format": "SKIP", "contenu": "Repos complet si déjà frais", "notes": "Fraîcheur absolue = priorité."}, "cooldown": "5min étirements", "objectifs": "• Rappel final mouvements\n• Campus ~1.5h\n• 🔥 COURSE DIMANCHE 22 MARS 2026! 🔥"}], "campus": [{"numero": 1, "campus": "~3h"}, {"numero": 2, "campus": "~3h"}, {"numero": 3, "campus": "~7h"}, {"numero": 4, "campus": "~3h"}, {"numero": 5, "campus": "~7h"}, {"numero": 6, "campus": "~8h"}, {"numero": 7, "campus": "~9h"}, {"numero": 8, "campus": "~3h"}, {"numero": 9, "campus": "~11h"}, {"numero": 10, "campus": "~9h"}, {"numero": 11, "campus": "~4h"}, {"numero": 12, "campus": "~2.5h"}, {"numero": 13, "campus": "~1.5h"}], "finishers": {"upper": [{"code": "A2", "nom": "Upper Power", "duree": "10min", "format": "EMOM 10min", "contenu": "Min 1: 15 Burpees + 500m Bike\nMin 2: Repos\n(5 rounds)"}, {"code": "A3", "nom": "Row Intervals", "duree": "12min", "format": "6 rounds", "contenu": "500m Row @ haute intensité\n90s repos"}], "lower": [{"code": "B2", "nom": "Goblet + Burpees", "duree": "12min", "format": "AMRAP 12min", "contenu": "15 Goblet Squats @ 32kg\n10 Burpees\n20 KB Swings @ 24kg"}, {"code": "B3", "nom": "KB + Bike", "duree": "15min", "format": "EMOM 15min", "contenu": "Min 1: 20 KB @ 24kg\nMin 2: Max cals Bike 45s\nMin 3: Repos"}]}};
+        const trainingData = {"musculation": [{"numero": 1, "dates": "22-28 DÃ©c", "notes": "Campus ~3h. ISCHIO: Skip squash, rameurâ†’Bike/Ski finishers", "upper": [{"nom": "Bench Press Barre", "series": "4x5", "charge": "92kg", "notes": "Prog: +2kg sem prÃ©cÃ©dente", "bloc": "Force"}, {"nom": "Cable Row Horizontal", "series": "4x6-8", "charge": "70kg", "notes": "Focus contraction dorsaux", "bloc": "Force"}, {"nom": "DÃ©veloppÃ© InclinÃ© HaltÃ¨res", "series": "3x8", "charge": "2x28kg", "notes": "Tempo contrÃ´lÃ©", "bloc": "Force"}, {"nom": "Ã‰lÃ©vations LatÃ©rales", "series": "3x12", "charge": "2x10kg", "notes": "Ã‰paules endurance (support WB)", "bloc": "Accessoires"}, {"nom": "Cable Pulldown", "series": "3x10", "charge": "60kg", "notes": "Sled Pull support", "bloc": "Accessoires"}, {"nom": "Face Pulls", "series": "3x15", "charge": "30kg", "notes": "StabilitÃ© Ã©paules", "bloc": "Accessoires"}], "lower": [{"nom": "Hip Thrust Machine", "series": "4x10", "charge": "70kg", "notes": "Prog: +5kg, remplace Trap Bar", "bloc": "Force"}, {"nom": "Back Squat", "series": "4x6", "charge": "92kg", "notes": "Rotation: Back cette semaine", "bloc": "Force"}, {"nom": "Squat Bulgare", "series": "3x8/jambe", "charge": "2x24kg", "notes": "Force unilatÃ©rale", "bloc": "Force"}, {"nom": "Lunges PondÃ©rÃ©es HALTÃˆRES", "series": "3x20m", "charge": "2x24kg", "notes": "Force - HaltÃ¨res muscu", "bloc": "Accessoires"}, {"nom": "Goblet Squat", "series": "3x12", "charge": "28kg", "notes": "WB endurance jambes", "bloc": "Accessoires"}, {"nom": "Broad Jumps", "series": "3x5", "charge": "Corps", "notes": "BBJ support - Distance max", "bloc": "Accessoires"}]}, {"numero": 2, "dates": "29 DÃ©c-4 Jan", "notes": "Campus ~3h. ISCHIO: Toujours prudent rameur/squash", "upper": [{"nom": "Bench Press Barre", "series": "4x5", "charge": "94kg", "notes": "+2kg", "bloc": "Force"}, {"nom": "Tirage Horizontal Poulie", "series": "4x6-8", "charge": "73kg", "notes": "+3kg", "bloc": "Force"}, {"nom": "DÃ©veloppÃ© InclinÃ© HaltÃ¨res", "series": "3x8", "charge": "2x30kg", "notes": "+2kg/haltÃ¨re", "bloc": "Force"}, {"nom": "DÃ©veloppÃ© HaltÃ¨res Ã‰paules", "series": "4x8", "charge": "2x20kg", "notes": "WB endurance", "bloc": "Accessoires"}, {"nom": "Tirage Vertical", "series": "3x10", "charge": "65kg", "notes": "+5kg", "bloc": "Accessoires"}, {"nom": "Ã‰lÃ©vations PostÃ©rieures", "series": "3x15", "charge": "2x8kg", "notes": "StabilitÃ©", "bloc": "Accessoires"}], "lower": [{"nom": "Hip Thrust Machine", "series": "4x10", "charge": "75kg", "notes": "+5kg", "bloc": "Force"}, {"nom": "Back Squat", "series": "4x6", "charge": "95kg", "notes": "+3kg", "bloc": "Force"}, {"nom": "Squat Bulgare", "series": "3x8/jambe", "charge": "2x26kg", "notes": "+2kg/haltÃ¨re", "bloc": "Force"}, {"nom": "Lunges PondÃ©rÃ©es HALTÃˆRES", "series": "3x20m", "charge": "2x26kg", "notes": "+2kg progression", "bloc": "Accessoires"}, {"nom": "Goblet Squat", "series": "3x12", "charge": "30kg", "notes": "+2kg", "bloc": "Accessoires"}, {"nom": "Presse Ã  Cuisse", "series": "3x10", "charge": "140kg", "notes": "Force pure", "bloc": "Accessoires"}]}, {"numero": 3, "dates": "5-11 Jan", "notes": "Campus HAUTE ~7h. Muscu DELOAD. Test squash lÃ©ger fin sem?", "upper": [{"nom": "Bench Press Barre", "series": "3x5", "charge": "85kg", "notes": "Volume -20%, charge -10%", "bloc": "Force"}, {"nom": "Tirage Horizontal", "series": "3x6", "charge": "65kg", "notes": "RÃ©duit", "bloc": "Force"}, {"nom": "DÃ©veloppÃ© InclinÃ© HaltÃ¨res", "series": "3x6", "charge": "2x24kg", "notes": "LÃ©ger", "bloc": "Force"}, {"nom": "Ã‰lÃ©vations LatÃ©rales", "series": "3x10", "charge": "2x8kg", "notes": "RÃ©duit", "bloc": "Accessoires"}, {"nom": "Cable Pulldown", "series": "3x8", "charge": "50kg", "notes": "Technique", "bloc": "Accessoires"}, {"nom": "Face Pulls", "series": "3x12", "charge": "25kg", "notes": "LÃ©ger", "bloc": "Accessoires"}], "lower": [{"nom": "Hip Thrust Machine", "series": "3x8", "charge": "65kg", "notes": "Volume -30%", "bloc": "Force"}, {"nom": "Front Squat", "series": "4x6", "charge": "75kg", "notes": "Rotation: Front, DÃ‰COUVERTE", "bloc": "Force"}, {"nom": "Squat Bulgare", "series": "3x6/jambe", "charge": "2x20kg", "notes": "RÃ©duit", "bloc": "Force"}, {"nom": "Lunges HALTÃˆRES", "series": "2x20m", "charge": "2x24kg", "notes": "Volume rÃ©duit", "bloc": "Accessoires"}, {"nom": "Goblet Squat", "series": "3x10", "charge": "24kg", "notes": "LÃ©ger", "bloc": "Accessoires"}, {"nom": "SKIP Broad Jumps", "series": "", "charge": "", "notes": "RÃ©cup", "bloc": "Accessoires"}]}, {"numero": 4, "dates": "12-18 Jan", "notes": "Campus DELOAD ~3h. Test rameur 500m si ischio OK", "upper": [{"nom": "Bench Press Barre", "series": "4x5", "charge": "96kg", "notes": "Retour prog +2kg", "bloc": "Force"}, {"nom": "Cable Row", "series": "4x6-8", "charge": "76kg", "notes": "+3kg", "bloc": "Force"}, {"nom": "DÃ©veloppÃ© InclinÃ© HaltÃ¨res", "series": "3x8", "charge": "2x32kg", "notes": "+2kg", "bloc": "Force"}, {"nom": "DÃ©veloppÃ© Ã‰paules", "series": "4x8", "charge": "2x22kg", "notes": "+2kg", "bloc": "Accessoires"}, {"nom": "Tirage Vertical", "series": "3x10", "charge": "68kg", "notes": "+3kg", "bloc": "Accessoires"}, {"nom": "Ã‰lÃ©vations Frontales", "series": "3x12", "charge": "2x10kg", "notes": "Nouveau", "bloc": "Accessoires"}], "lower": [{"nom": "Hip Thrust Machine", "series": "4x10", "charge": "80kg", "notes": "+5kg fort", "bloc": "Force"}, {"nom": "Front Squat", "series": "4x8", "charge": "80kg", "notes": "Prog +5kg", "bloc": "Force"}, {"nom": "Squat Bulgare", "series": "3x8/jambe", "charge": "2x28kg", "notes": "+2kg", "bloc": "Force"}, {"nom": "Lunges HALTÃˆRES", "series": "3x20m", "charge": "2x28kg", "notes": "+2kg", "bloc": "Accessoires"}, {"nom": "Goblet Squat", "series": "3x12", "charge": "32kg", "notes": "+2kg", "bloc": "Accessoires"}, {"nom": "Broad Jumps", "series": "4x5", "charge": "Corps", "notes": "+1 sÃ©rie", "bloc": "Accessoires"}]}, {"numero": 5, "dates": "19-25 Jan", "notes": "Campus ~7h haute. Ischio devrait Ãªtre OK maintenant", "upper": [{"nom": "Bench Press Barre", "series": "5x5", "charge": "98kg", "notes": "Volume +25%, +2kg", "bloc": "Force"}, {"nom": "Tirage Horizontal", "series": "4x6", "charge": "80kg", "notes": "+4kg, reps -2", "bloc": "Force"}, {"nom": "DÃ©veloppÃ© InclinÃ© HaltÃ¨res", "series": "4x6", "charge": "2x34kg", "notes": "+2kg", "bloc": "Force"}, {"nom": "DÃ©veloppÃ© Ã‰paules", "series": "4x8", "charge": "2x24kg", "notes": "+2kg", "bloc": "Accessoires"}, {"nom": "Cable Pulldown", "series": "3x8", "charge": "70kg", "notes": "Lourd", "bloc": "Accessoires"}, {"nom": "Ã‰cartÃ©s Pectoraux Poulie", "series": "3x12", "charge": "15kg", "notes": "Nouveau", "bloc": "Accessoires"}], "lower": [{"nom": "Hip Thrust Machine", "series": "5x10", "charge": "85kg", "notes": "Volume +25%", "bloc": "Force"}, {"nom": "Back Squat", "series": "5x5", "charge": "98kg", "notes": "Rotation: Back, +3kg", "bloc": "Force"}, {"nom": "Squat Bulgare", "series": "4x8/jambe", "charge": "2x30kg", "notes": "+2kg", "bloc": "Force"}, {"nom": "Lunges HALTÃˆRES", "series": "4x20m", "charge": "2x28kg", "notes": "Volume +33%", "bloc": "Accessoires"}, {"nom": "Hack Squat", "series": "3x8", "charge": "100kg", "notes": "Nouveau - Force", "bloc": "Accessoires"}, {"nom": "Broad Jumps", "series": "4x5", "charge": "Corps", "notes": "Constance", "bloc": "Accessoires"}]}, {"numero": 6, "dates": "26 Jan-1 FÃ©v", "notes": "Campus ~8h haute. PRO! 100kg bench/squat. Lunges lourdes!", "upper": [{"nom": "Bench Press Barre", "series": "5x5", "charge": "100kg", "notes": "+2kg - 100kg atteint!", "bloc": "Force"}, {"nom": "Cable Row", "series": "5x6", "charge": "83kg", "notes": "+3kg", "bloc": "Force"}, {"nom": "DÃ©veloppÃ© CouchÃ© HaltÃ¨res", "series": "4x8", "charge": "2x40kg", "notes": "Variante", "bloc": "Force"}, {"nom": "DÃ©veloppÃ© Ã‰paules", "series": "5x6", "charge": "2x26kg", "notes": "Lourd -2 reps", "bloc": "Accessoires"}, {"nom": "Tirage BÃ»cheron", "series": "3x10/bras", "charge": "36kg", "notes": "UnilatÃ©ral", "bloc": "Accessoires"}, {"nom": "Face Pulls", "series": "4x15", "charge": "35kg", "notes": "+5kg", "bloc": "Accessoires"}], "lower": [{"nom": "Hip Thrust Machine", "series": "5x10", "charge": "90kg", "notes": "+5kg", "bloc": "Force"}, {"nom": "Back Squat", "series": "5x5", "charge": "100kg", "notes": "+2kg - 100kg!", "bloc": "Force"}, {"nom": "Squat Bulgare", "series": "4x8/jambe", "charge": "2x32kg", "notes": "+2kg", "bloc": "Force"}, {"nom": "Lunges HALTÃˆRES", "series": "4x20m", "charge": "2x30kg", "notes": "+2kg - Lourd!", "bloc": "Accessoires"}, {"nom": "Goblet Squat", "series": "4x10", "charge": "36kg", "notes": "+4kg lourd", "bloc": "Accessoires"}, {"nom": "Leg Extension", "series": "3x15", "charge": "60kg", "notes": "Finition quads", "bloc": "Accessoires"}]}, {"numero": 7, "dates": "2-8 FÃ©v", "notes": "Campus HAUTE ~9h. Muscu DELOAD. RÃ©cup avant pic", "upper": [{"nom": "Bench Press Barre", "series": "3x5", "charge": "90kg", "notes": "Volume -40%, charge -10%", "bloc": "Force"}, {"nom": "Tirage Horizontal", "series": "3x6", "charge": "75kg", "notes": "RÃ©duit", "bloc": "Force"}, {"nom": "DÃ©veloppÃ© InclinÃ© HaltÃ¨res", "series": "3x6", "charge": "2x28kg", "notes": "LÃ©ger", "bloc": "Force"}, {"nom": "Ã‰lÃ©vations LatÃ©rales", "series": "3x10", "charge": "2x10kg", "notes": "Technique", "bloc": "Accessoires"}, {"nom": "Cable Pulldown", "series": "3x8", "charge": "55kg", "notes": "LÃ©ger", "bloc": "Accessoires"}, {"nom": "Pompes", "series": "3x10", "charge": "Corps", "notes": "Bodyweight", "bloc": "Accessoires"}], "lower": [{"nom": "Hip Thrust Machine", "series": "3x8", "charge": "75kg", "notes": "Volume -40%", "bloc": "Force"}, {"nom": "Front Squat", "series": "4x6", "charge": "85kg", "notes": "Rotation: Front, +5kg", "bloc": "Force"}, {"nom": "Squat Bulgare", "series": "3x6/jambe", "charge": "2x24kg", "notes": "RÃ©duit", "bloc": "Force"}, {"nom": "Lunges HALTÃˆRES", "series": "2x20m", "charge": "2x28kg", "notes": "Volume rÃ©duit", "bloc": "Accessoires"}, {"nom": "Goblet Squat", "series": "3x8", "charge": "28kg", "notes": "LÃ©ger", "bloc": "Accessoires"}, {"nom": "SKIP Broad Jumps", "series": "", "charge": "", "notes": "RÃ©cup", "bloc": "Accessoires"}]}, {"numero": 8, "dates": "9-15 FÃ©v", "notes": "Campus DELOAD ~3h. Test Hyrox WB prioritaire", "upper": [{"nom": "Bench Press Barre", "series": "5x4", "charge": "103kg", "notes": "Test +3kg, reps -1", "bloc": "Force"}, {"nom": "Cable Row", "series": "5x6", "charge": "85kg", "notes": "+2kg", "bloc": "Force"}, {"nom": "DÃ©veloppÃ© InclinÃ© Barre", "series": "4x6", "charge": "75kg", "notes": "Barre variante", "bloc": "Force"}, {"nom": "DÃ©veloppÃ© Ã‰paules", "series": "5x6", "charge": "2x28kg", "notes": "+2kg", "bloc": "Accessoires"}, {"nom": "Tirage Vertical", "series": "4x8", "charge": "72kg", "notes": "+4kg", "bloc": "Accessoires"}, {"nom": "Ã‰lÃ©vations PostÃ©rieures", "series": "4x12", "charge": "2x10kg", "notes": "+2kg", "bloc": "Accessoires"}], "lower": [{"nom": "Hip Thrust Machine", "series": "5x10", "charge": "95kg", "notes": "+5kg test", "bloc": "Force"}, {"nom": "Front Squat", "series": "5x6", "charge": "88kg", "notes": "+3kg", "bloc": "Force"}, {"nom": "Squat Bulgare", "series": "4x8/jambe", "charge": "2x34kg", "notes": "+2kg", "bloc": "Force"}, {"nom": "Lunges HALTÃˆRES", "series": "4x20m", "charge": "2x30kg", "notes": "Maintien lourd", "bloc": "Accessoires"}, {"nom": "Presse Ã  Cuisse", "series": "4x8", "charge": "160kg", "notes": "+20kg lourd", "bloc": "Accessoires"}, {"nom": "Broad Jumps", "series": "4x5", "charge": "Corps", "notes": "Test", "bloc": "Accessoires"}]}, {"numero": 9, "dates": "16-22 FÃ©v", "notes": "Campus HAUTE MAX ~11h. Pic force muscu", "upper": [{"nom": "Bench Press Barre", "series": "4x4", "charge": "105kg", "notes": "Pic force +2kg", "bloc": "Force"}, {"nom": "Tirage Horizontal", "series": "5x5", "charge": "88kg", "notes": "Force max", "bloc": "Force"}, {"nom": "DÃ©veloppÃ© InclinÃ© HaltÃ¨res", "series": "4x6", "charge": "2x36kg", "notes": "+2kg", "bloc": "Force"}, {"nom": "DÃ©veloppÃ© Ã‰paules", "series": "5x5", "charge": "2x30kg", "notes": "Lourd WB prep", "bloc": "Accessoires"}, {"nom": "Cable Pulldown", "series": "4x6", "charge": "75kg", "notes": "Sled Pull force", "bloc": "Accessoires"}, {"nom": "Face Pulls", "series": "4x15", "charge": "40kg", "notes": "+5kg", "bloc": "Accessoires"}], "lower": [{"nom": "Hip Thrust Machine", "series": "5x8", "charge": "100kg", "notes": "+5kg pic", "bloc": "Force"}, {"nom": "Back Squat", "series": "4x4", "charge": "103kg", "notes": "Rotation: Back, +3kg force", "bloc": "Force"}, {"nom": "Squat Bulgare", "series": "4x6/jambe", "charge": "2x36kg", "notes": "+2kg lourd", "bloc": "Force"}, {"nom": "Lunges HALTÃˆRES", "series": "5x20m", "charge": "2x30kg", "notes": "Volume max lourd", "bloc": "Accessoires"}, {"nom": "Goblet Squat", "series": "4x8", "charge": "40kg", "notes": "+4kg", "bloc": "Accessoires"}, {"nom": "Leg Extension", "series": "4x12", "charge": "70kg", "notes": "+10kg", "bloc": "Accessoires"}]}, {"numero": 10, "dates": "23 FÃ©v-1 Mars", "notes": "Campus ~9h. Simulation Hyrox = PRIORITÃ‰ ABSOLUE", "upper": [{"nom": "Bench Press Barre", "series": "4x3", "charge": "107kg", "notes": "+2kg", "bloc": "Force"}, {"nom": "Cable Row", "series": "5x5", "charge": "90kg", "notes": "+2kg", "bloc": "Force"}, {"nom": "DÃ©veloppÃ© CouchÃ© HaltÃ¨res", "series": "4x6", "charge": "2x42kg", "notes": "+2kg", "bloc": "Force"}, {"nom": "DÃ©veloppÃ© Ã‰paules", "series": "4x6", "charge": "2x30kg", "notes": "Maintien", "bloc": "Accessoires"}, {"nom": "Tirage BÃ»cheron", "series": "4x8/bras", "charge": "38kg", "notes": "+2kg", "bloc": "Accessoires"}, {"nom": "Ã‰lÃ©vations LatÃ©rales", "series": "4x10", "charge": "2x12kg", "notes": "+2kg", "bloc": "Accessoires"}], "lower": [{"nom": "Hip Thrust Machine", "series": "4x8", "charge": "105kg", "notes": "+5kg", "bloc": "Force"}, {"nom": "Back Squat", "series": "4x3", "charge": "105kg", "notes": "+2kg pic", "bloc": "Force"}, {"nom": "Squat Bulgare", "series": "4x6/jambe", "charge": "2x38kg", "notes": "+2kg", "bloc": "Force"}, {"nom": "Lunges HALTÃˆRES", "series": "4x20m", "charge": "2x30kg", "notes": "Maintien", "bloc": "Accessoires"}, {"nom": "Hack Squat", "series": "4x6", "charge": "120kg", "notes": "+20kg", "bloc": "Accessoires"}, {"nom": "Broad Jumps", "series": "5x5", "charge": "Corps", "notes": "Max volume", "bloc": "Accessoires"}]}, {"numero": 11, "dates": "2-8 Mars", "notes": "Campus ~4h descente. TAPER. FraÃ®cheur prioritaire", "upper": [{"nom": "Bench Press Barre", "series": "3x3", "charge": "95kg", "notes": "Volume -50%, charge -12kg", "bloc": "Force"}, {"nom": "Tirage Horizontal", "series": "3x5", "charge": "80kg", "notes": "RÃ©duit", "bloc": "Force"}, {"nom": "DÃ©veloppÃ© InclinÃ© HaltÃ¨res", "series": "3x5", "charge": "2x30kg", "notes": "LÃ©ger", "bloc": "Force"}, {"nom": "DÃ©veloppÃ© Ã‰paules", "series": "3x6", "charge": "2x24kg", "notes": "Technique", "bloc": "Accessoires"}, {"nom": "Cable Pulldown", "series": "3x6", "charge": "60kg", "notes": "LÃ©ger", "bloc": "Accessoires"}, {"nom": "SKIP Face Pulls", "series": "", "charge": "", "notes": "Minimal", "bloc": "Accessoires"}], "lower": [{"nom": "Hip Thrust Machine", "series": "3x6", "charge": "85kg", "notes": "Volume -50%", "bloc": "Force"}, {"nom": "Front Squat", "series": "3x5", "charge": "90kg", "notes": "Rotation: Front, technique", "bloc": "Force"}, {"nom": "Squat Bulgare", "series": "3x5/jambe", "charge": "2x28kg", "notes": "LÃ©ger", "bloc": "Force"}, {"nom": "Lunges HALTÃˆRES", "series": "2x20m", "charge": "2x28kg", "notes": "Technique", "bloc": "Accessoires"}, {"nom": "Goblet Squat", "series": "3x6", "charge": "32kg", "notes": "LÃ©ger", "bloc": "Accessoires"}, {"nom": "SKIP Broad Jumps", "series": "", "charge": "", "notes": "FraÃ®cheur", "bloc": "Accessoires"}]}, {"numero": 12, "dates": "9-15 Mars", "notes": "Campus ~2.5h. DerniÃ¨re sÃ©ance JEUDI 12 MARS max", "upper": [{"nom": "Bench Press Barre", "series": "2x3", "charge": "90kg", "notes": "Activation neurale", "bloc": "Force"}, {"nom": "Tirage Horizontal", "series": "2x5", "charge": "75kg", "notes": "LÃ©ger", "bloc": "Force"}, {"nom": "DÃ©veloppÃ© InclinÃ© HaltÃ¨res", "series": "2x5", "charge": "2x28kg", "notes": "Activation", "bloc": "Force"}, {"nom": "DÃ©veloppÃ© Ã‰paules", "series": "2x6", "charge": "2x20kg", "notes": "Technique", "bloc": "Accessoires"}, {"nom": "SKIP reste", "series": "", "charge": "", "notes": "Minimal", "bloc": "Accessoires"}], "lower": [{"nom": "Hip Thrust Machine", "series": "2x5", "charge": "80kg", "notes": "Activation", "bloc": "Force"}, {"nom": "Back Squat", "series": "2x3", "charge": "95kg", "notes": "Rotation: Back, neural", "bloc": "Force"}, {"nom": "Squat Bulgare", "series": "2x5/jambe", "charge": "2x24kg", "notes": "Technique", "bloc": "Force"}, {"nom": "Lunges HALTÃˆRES", "series": "1x20m", "charge": "2x24kg", "notes": "Rappel technique", "bloc": "Accessoires"}, {"nom": "SKIP reste", "series": "", "charge": "", "notes": "FraÃ®cheur absolue", "bloc": "Accessoires"}]}, {"numero": 13, "dates": "16-22 Mars", "notes": "Campus ~1.5h. Activation MAR 17. OFF MER-SAM. ðŸ”¥ COURSE DIM 22!", "upper": [{"nom": "Bench Press Barre", "series": "2x3", "charge": "90kg", "notes": "MARDI 17: Activation lÃ©gÃ¨re", "bloc": "Force"}, {"nom": "Tirage Horizontal", "series": "2x5", "charge": "75kg", "notes": "Rappel mouvement", "bloc": "Force"}, {"nom": "MobilitÃ©", "series": "10min", "charge": "", "notes": "Ã‰paules + dos", "bloc": "Force"}, {"nom": "SKIP", "series": "", "charge": "", "notes": "Repos absolue", "bloc": "Accessoires"}], "lower": [{"nom": "Hip Thrust Machine", "series": "2x5", "charge": "80kg", "notes": "MARDI 17: Activation", "bloc": "Force"}, {"nom": "Back Squat", "series": "2x3", "charge": "95kg", "notes": "Rappel mouvement", "bloc": "Force"}, {"nom": "MobilitÃ©", "series": "10min", "charge": "", "notes": "Hanches + chevilles", "bloc": "Force"}, {"nom": "Lunges HALTÃˆRES", "series": "1x20m", "charge": "2x20kg", "notes": "Rappel lÃ©ger", "bloc": "Accessoires"}, {"nom": "SKIP reste", "series": "", "charge": "", "notes": "Repos", "bloc": "Accessoires"}]}], "hyrox": [{"numero": 1, "dates": "22-28 DÃ©c", "focus": "Focus: WB Technique + Adaptation", "echauffement": "5min mobilitÃ© (hanches, Ã©paules, chevilles)\n3x5 Broad Jumps (sans burpee)\n3x3 BBJ (technique)\n2x10 WB @ 6kg", "option_a": {"format": "EMOM 24min (8 rounds x 3min)", "contenu": "Min 1: 15 Wall Balls @ 9kg\nMin 2: 20m Lunges SANDBAG @ 28kg\nMin 3: 20 KB Swings @ 24kg", "notes": "Focus technique WB parfaite. Rythme constant."}, "option_b": {"format": "EMOM 24min (8 rounds x 3min)", "contenu": "Min 1: 15 Wall Balls @ 9kg\nMin 2: 250m Row @ modÃ©rÃ©\nMin 3: 20 KB Swings @ 24kg", "notes": "Row remplace lunges si pluie. MÃªme objectif technique."}, "cooldown": "5min Ã©tirements (quadriceps, Ã©paules, dos)", "objectifs": "â€¢ Technique WB parfaite (squat profond, lancer fluide)\nâ€¢ Campus ~3h bas\nâ€¢ ISCHIO: Ski OK, pas rameur. Skip squash."}, {"numero": 2, "dates": "29 DÃ©c-4 Jan", "focus": "Focus: Sled Push Overload + BBJ", "echauffement": "5min mobilitÃ©\n3x2x12.5m Sled Push @ 150kg\n3x3 BBJ\n500m Row @ facile", "option_a": {"format": "5 rounds FOR TIME", "contenu": "4x12.5m Sled Push @ 210kg (pro+8kg)\n400m Run @ pace Hyrox (~4:15/km)\n2min30 repos entre rounds", "notes": "Objectif: <20min total. Sled: puissance, run: pace."}, "option_b": {"format": "5 rounds FOR TIME", "contenu": "4x12.5m Sled Push @ 210kg\n500m Row @ intensitÃ© Ã©levÃ©e\n2min repos entre rounds", "notes": "Row remplace run, intensitÃ© similaire."}, "cooldown": "5min mobilitÃ© hanches + quadriceps", "objectifs": "â€¢ Overload sled +8kg\nâ€¢ Campus ~3h bas\nâ€¢ ISCHIO: Toujours prudent rameur/squash"}, {"numero": 3, "dates": "5-11 Jan", "focus": "Focus: WB Endurance + Mix stations", "echauffement": "5min mobilitÃ©\n3x10 WB @ 6kg\n2x15 WB @ 9kg\n500m Ski @ facile", "option_a": {"format": "AMRAP 30min", "contenu": "30 Wall Balls @ 9kg\n100m Farmers @ 2x32kg (overload)\n20 Burpees\n400m Run", "notes": "Objectif: >4 rounds. Pas pause WB, farmers unbroken."}, "option_b": {"format": "AMRAP 30min", "contenu": "30 Wall Balls @ 9kg\n100m Farmers @ 2x32kg\n20 Burpees\n500m Ski", "notes": "Ski remplace run."}, "cooldown": "5min Ã©tirements Ã©paules + grip", "objectifs": "â€¢ WB endurance 30 reps sans casser\nâ€¢ Campus HAUTE ~7h\nâ€¢ Test squash lÃ©ger fin semaine?"}, {"numero": 4, "dates": "12-18 Jan", "focus": "Focus: TEST STATIONS (Baseline)", "echauffement": "10min Ã©chauffement complet\nActivation toutes stations lÃ©gÃ¨res", "option_a": {"format": "FOR TIME (Baseline)", "contenu": "1000m SkiErg\n4x12.5m Sled Push @ 202kg (poids pro exact)\n4x12.5m Sled Pull @ 153kg (poids pro exact)\n80m Burpee Broad Jump\n1000m Row", "notes": "CHRONO TOTAL. Baseline rÃ©fÃ©rence. Effort 85%."}, "option_b": {"format": "MÃªme test", "contenu": "Identique Option A", "notes": "Test intÃ©rieur, pas besoin alternative."}, "cooldown": "10min rÃ©cup active + mobilitÃ©", "objectifs": "â€¢ Temps total: ~18-20min objectif\nâ€¢ Campus DELOAD ~3h\nâ€¢ Test rameur 500m si ischio OK"}, {"numero": 5, "dates": "19-25 Jan", "focus": "Focus: WB + Sled Push Compromised", "echauffement": "5min mobilitÃ©\n3x10 WB @ 9kg\n2x2x12.5m Sled @ 180kg\n3x5 Burpees", "option_a": {"format": "10 rounds", "contenu": "500m Row @ intensitÃ© Ã©levÃ©e\n15 Wall Balls @ 9kg\n45s repos", "notes": "Compromised WB aprÃ¨s row. Objectif: <20min total."}, "option_b": {"format": "10 rounds", "contenu": "Alternate: 500m Row / 500m Ski\n15 Wall Balls @ 9kg\n45s repos", "notes": "Variation ergos."}, "cooldown": "5min Ã©tirements", "objectifs": "â€¢ Compromised WB: tenir 15 reps aprÃ¨s row\nâ€¢ Campus ~7h haute\nâ€¢ Ischio devrait Ãªtre OK maintenant"}, {"numero": 6, "dates": "26 Jan-1 FÃ©v", "focus": "Focus: Sled OVERLOAD MAX + Lunges", "echauffement": "5min mobilitÃ© hanches\n3x2x12.5m Sled @ 180kg\n2x20m Lunges SANDBAG @ 24kg\n500m Row", "option_a": {"format": "5 rounds", "contenu": "4x12.5m Sled Push @ 240kg (PRO+38kg OVERLOAD!)\n4x12.5m Sled Pull @ 180kg (PRO+27kg)\n400m Run @ pace cible\n3min repos", "notes": "OVERLOAD MAXIMUM! Effort 90%. Sensation force."}, "option_b": {"format": "5 rounds", "contenu": "4x12.5m Sled Push @ 240kg\n4x12.5m Sled Pull @ 180kg\n500m Bike @ haute intensitÃ©\n2min30 repos", "notes": "Bike remplace run."}, "cooldown": "10min Ã©tirements jambes", "objectifs": "â€¢ Sled 240kg: confiance mentale\nâ€¢ Campus ~8h haute\nâ€¢ 202kg en course = \"lÃ©ger\" aprÃ¨s overload"}, {"numero": 7, "dates": "2-8 FÃ©v", "focus": "Focus: Lunges Endurance + BBJ", "echauffement": "5min mobilitÃ©\n2x20m Lunges SANDBAG @ 24kg\n3x5 BBJ\n500m Row", "option_a": {"format": "EMOM 18min (6 rounds x 3min)", "contenu": "Min 1: 20m Lunges SANDBAG @ 30kg (poids pro)\nMin 2: 15 BBJ\nMin 3: 400m Run", "notes": "Focus lunges technique parfaite, BBJ distance constant."}, "option_b": {"format": "EMOM 18min", "contenu": "Min 1: 20m Lunges SANDBAG @ 30kg\nMin 2: 15 BBJ\nMin 3: 500m Row", "notes": "Row remplace run."}, "cooldown": "5min Ã©tirements", "objectifs": "â€¢ Lunges pro: posture 100m\nâ€¢ Campus HAUTE ~9h\nâ€¢ BBJ: distance >4.5m/rep"}, {"numero": 8, "dates": "9-15 FÃ©v", "focus": "Focus: TEST + WB 100 reps", "echauffement": "10min Ã©chauffement complet\n2x15 WB @ 6kg\n3x5 WB @ 9kg", "option_a": {"format": "FOR TIME (Benchmark 2)", "contenu": "TEST 1: 100 Wall Balls @ 9kg FOR TIME\n(repos 5min)\nTEST 2: 80m BBJ FOR TIME\n(repos 5min)\nTEST 3: 4x12.5m Sled Push @ 202kg FOR TIME", "notes": "Tests isolÃ©s. Objectif: WB <4:15, BBJ <4min, Sled <3min."}, "option_b": {"format": "MÃªme test", "contenu": "Identique", "notes": "Test intÃ©rieur."}, "cooldown": "10min rÃ©cup", "objectifs": "â€¢ WB 100 reps: <4:15 = excellent\nâ€¢ Campus DELOAD ~3h\nâ€¢ Validation progression vs sem 4"}, {"numero": 9, "dates": "16-22 FÃ©v", "focus": "Focus: WB SpÃ©cifique + Density", "echauffement": "5min mobilitÃ©\n3x10 WB @ 9kg\nActivation complÃ¨te", "option_a": {"format": "12 rounds", "contenu": "400m Run @ pace Hyrox exact\n20 Wall Balls @ 9kg\n30s repos", "notes": "DENSITÃ‰ MAX. SpÃ©cificitÃ© absolue. Effort 85%."}, "option_b": {"format": "12 rounds", "contenu": "Alternate: 500m Row / 500m Ski / 500m Bike\n20 Wall Balls @ 9kg\n30s repos", "notes": "Variation ergos."}, "cooldown": "5min Ã©tirements", "objectifs": "â€¢ WB: 20 reps constant 12 rounds\nâ€¢ Campus HAUTE MAX ~11h\nâ€¢ Run pace exact: 4:15/km"}, {"numero": 10, "dates": "23 FÃ©v-1 Mars", "focus": "Focus: SIMULATION COMPLÃˆTE 1-8", "echauffement": "15min Ã©chauffement complet\nActivation lÃ©gÃ¨re toutes stations", "option_a": {"format": "STATIONS 1-8 (80% effort)", "contenu": "1km Run + 1000m Ski + 1km Run\n4x12.5m Sled Push @ 202kg + 1km Run\n4x12.5m Sled Pull @ 153kg + 1km Run\n80m BBJ + 1km Run\n1000m Row + 1km Run\n200m Farmers @ 2x32kg + 1km Run\n100m Lunges SANDBAG @ 30kg + 1km Run\n100 Wall Balls @ 9kg", "notes": "SIMULATION COMPLÃˆTE. Effort 80%. Objectif: 1h10-1h12."}, "option_b": {"format": "MÃªme simulation", "contenu": "Identique", "notes": "Simulation complÃ¨te intÃ©rieur."}, "cooldown": "15min rÃ©cup active", "objectifs": "â€¢ Temps total: 1h10-1h12 = excellent\nâ€¢ Campus ~9h\nâ€¢ Valider stratÃ©gie pace + nutrition"}, {"numero": 11, "dates": "2-8 Mars", "focus": "Focus: TAPER - Technique lÃ©gÃ¨re", "echauffement": "10min mobilitÃ© complÃ¨te\nActivation lÃ©gÃ¨re", "option_a": {"format": "Technique LÃ©gÃ¨re (40min max)", "contenu": "3x15 WB @ 9kg (technique parfaite)\n3x4x12.5m Sled Push @ 150kg (vitesse)\n3x20m Lunges SANDBAG @ 24kg (posture)\n3x10 BBJ (distance)\n500m Row @ facile", "notes": "VOLUME MINIMAL. Technique > IntensitÃ©."}, "option_b": {"format": "MÃªme", "contenu": "Identique", "notes": "Pas besoin alternative."}, "cooldown": "10min Ã©tirements doux", "objectifs": "â€¢ Maintenir connexion neuromusculaire\nâ€¢ Campus ~4h descente\nâ€¢ ZÃ‰RO fatigue"}, {"numero": 12, "dates": "9-15 Mars", "focus": "Focus: TAPER - Activation minimale", "echauffement": "5min mobilitÃ© lÃ©gÃ¨re", "option_a": {"format": "Activation (30min max)", "contenu": "2x10 WB @ 6kg (rappel mouvement)\n2x2x12.5m Sled Push @ 120kg (vitesse)\n2x20m Lunges SANDBAG @ 20kg (rappel)\n5 BBJ (technique)", "notes": "DERNIÃˆRE SÃ‰ANCE. JEUDI 12 MARS max. Repos jusqu'Ã  dim."}, "option_b": {"format": "SKIP", "contenu": "Repos complet si moindre doute", "notes": "FraÃ®cheur absolue prioritaire."}, "cooldown": "5min Ã©tirements lÃ©gers", "objectifs": "â€¢ Rappel mouvements\nâ€¢ Campus ~2.5h\nâ€¢ Repos jeudi-samedi complet"}, {"numero": 13, "dates": "16-22 Mars", "focus": "Focus: RACE WEEK - Activation finale", "echauffement": "5min mobilitÃ© lÃ©gÃ¨re", "option_a": {"format": "Activation (20min max)", "contenu": "MARDI 17 ou MERCREDI 18:\n2x10 WB @ 6kg (rappel)\n2x2x12.5m Sled Push @ 120kg (vitesse)\n2x20m Lunges SANDBAG @ 20kg\n5 BBJ (technique)", "notes": "Activation mar 17 ou mer 18. OFF jeu-sam."}, "option_b": {"format": "SKIP", "contenu": "Repos complet si dÃ©jÃ  frais", "notes": "FraÃ®cheur absolue = prioritÃ©."}, "cooldown": "5min Ã©tirements", "objectifs": "â€¢ Rappel final mouvements\nâ€¢ Campus ~1.5h\nâ€¢ ðŸ”¥ COURSE DIMANCHE 22 MARS 2026! ðŸ”¥"}], "campus": [{"numero": 1, "campus": "~3h"}, {"numero": 2, "campus": "~3h"}, {"numero": 3, "campus": "~7h"}, {"numero": 4, "campus": "~3h"}, {"numero": 5, "campus": "~7h"}, {"numero": 6, "campus": "~8h"}, {"numero": 7, "campus": "~9h"}, {"numero": 8, "campus": "~3h"}, {"numero": 9, "campus": "~11h"}, {"numero": 10, "campus": "~9h"}, {"numero": 11, "campus": "~4h"}, {"numero": 12, "campus": "~2.5h"}, {"numero": 13, "campus": "~1.5h"}], "finishers": {"upper": [{"code": "A2", "nom": "Upper Power", "duree": "10min", "format": "EMOM 10min", "contenu": "Min 1: 15 Burpees + 500m Bike\nMin 2: Repos\n(5 rounds)"}, {"code": "A3", "nom": "Row Intervals", "duree": "12min", "format": "6 rounds", "contenu": "500m Row @ haute intensitÃ©\n90s repos"}], "lower": [{"code": "B2", "nom": "Goblet + Burpees", "duree": "12min", "format": "AMRAP 12min", "contenu": "15 Goblet Squats @ 32kg\n10 Burpees\n20 KB Swings @ 24kg"}, {"code": "B3", "nom": "KB + Bike", "duree": "15min", "format": "EMOM 15min", "contenu": "Min 1: 20 KB @ 24kg\nMin 2: Max cals Bike 45s\nMin 3: Repos"}]}};
         
         let currentWeek = 0;
         let currentFilter = 'all';
@@ -1227,6 +1241,38 @@
                 navigator.vibrate(200);
             }
         }
+        function playBellAndVibrate() {
+            // VIBRATION - TOUJOURS (mÃªme sans son)
+            if (navigator.vibrate) {
+                navigator.vibrate([200, 100, 200]);
+            }
+            
+            // SON - seulement si activÃ©
+            if (window.audioEnabled && window.audioContext && window.bellBuffer) {
+                try {
+                    const source = window.audioContext.createBufferSource();
+                    source.buffer = window.bellBuffer;
+                    const gainNode = window.audioContext.createGain();
+                    gainNode.gain.value = 1.0;
+                    source.connect(gainNode);
+                    gainNode.connect(window.audioContext.destination);
+                    source.start();
+                    console.log('ðŸ”” BIP -', new Date().toLocaleTimeString());
+                } catch (e) {
+                    console.error('âŒ Erreur playBell:', e);
+                }
+            } else {
+                console.log('âš¡ Vibration seule (son non activÃ©)');
+            }
+            
+            // Flash visuel
+            const timerTime = document.getElementById('timerTime');
+            if (timerTime) {
+                timerTime.style.animation = 'pulse 0.3s ease-in-out';
+                setTimeout(() => { timerTime.style.animation = ''; }, 300);
+            }
+        }
+
         
         // LocalStorage management
         function loadCompletions() {
@@ -1381,7 +1427,7 @@
                 html += `
                     <div class="bloc-section">
                         <div class="bloc-title ${blocClass}">
-                            ${bloc === 'Force' ? '🔥' : '⚙️'} ${bloc}
+                            ${bloc === 'Force' ? 'ðŸ”¥' : 'âš™ï¸'} ${bloc}
                         </div>
                 `;
                 
@@ -1392,7 +1438,7 @@
                             <div class="exercise-details">
                                 ${ex.series ? `
                                     <div class="exercise-stat">
-                                        <span class="stat-label">Séries</span>
+                                        <span class="stat-label">SÃ©ries</span>
                                         <span class="stat-value">${ex.series}</span>
                                     </div>
                                 ` : ''}
@@ -1404,7 +1450,7 @@
                                 ` : ''}
                             </div>
                             ${ex.notes && ex.notes !== 'nan' ? `
-                                <div class="exercise-notes">💡 ${ex.notes}</div>
+                                <div class="exercise-notes">ðŸ’¡ ${ex.notes}</div>
                             ` : ''}
                         </div>
                     `;
@@ -1429,7 +1475,7 @@
             const selected = localStorage.getItem(selectedKey);
             
             let html = '<div class="finishers-section" style="margin-top: 16px; padding: 16px; background: var(--bg-exercise); border-radius: 12px;">';
-            html += '<div class="finishers-title" style="font-size: 14px; font-weight: 700; color: var(--accent-secondary); margin-bottom: 12px;">⚡ Finisher (optionnel)</div>';
+            html += '<div class="finishers-title" style="font-size: 14px; font-weight: 700; color: var(--accent-secondary); margin-bottom: 12px;">âš¡ Finisher (optionnel)</div>';
             html += '<div style="display: flex; gap: 12px; margin-bottom: 12px;">';
             
             options.forEach(function(opt, idx) {
@@ -1489,17 +1535,17 @@
             let html = `
                 <div class="hyrox-options">
                     <div class="option-selector" id="optionA-${weekNum}" onclick="selectOption(${weekNum}, 'A')">
-                        <div class="option-title">☀️ Option A</div>
+                        <div class="option-title">â˜€ï¸ Option A</div>
                         <div class="option-subtitle">Beau temps - Run</div>
                     </div>
                     <div class="option-selector" id="optionB-${weekNum}" onclick="selectOption(${weekNum}, 'B')">
-                        <div class="option-title">🌧️ Option B</div>
+                        <div class="option-title">ðŸŒ§ï¸ Option B</div>
                         <div class="option-subtitle">Pluie - Ergos</div>
                     </div>
                 </div>
                 
                 <div class="hyrox-section">
-                    <div class="hyrox-section-title">🎯 Focus</div>
+                    <div class="hyrox-section-title">ðŸŽ¯ Focus</div>
                     <div class="hyrox-section-content">${hyrox.focus}</div>
                 </div>
             `;
@@ -1507,7 +1553,7 @@
             if (hyrox.echauffement) {
                 html += `
                     <div class="hyrox-section">
-                        <div class="hyrox-section-title">🔥 Échauffement</div>
+                        <div class="hyrox-section-title">ðŸ”¥ Ã‰chauffement</div>
                         <div class="hyrox-section-content">${hyrox.echauffement}</div>
                     </div>
                 `;
@@ -1515,7 +1561,7 @@
             
             html += `
                 <div class="hyrox-section" id="optionADetails-${weekNum}" style="display:none;">
-                    <div class="hyrox-section-title">☀️ Option A - Détails</div>
+                    <div class="hyrox-section-title">â˜€ï¸ Option A - DÃ©tails</div>
                     <div class="hyrox-section-content">
                         <strong>Format:</strong> ${hyrox.option_a.format}<br><br>
                         <strong>Contenu:</strong><br>${hyrox.option_a.contenu}
@@ -1524,7 +1570,7 @@
                 </div>
                 
                 <div class="hyrox-section" id="optionBDetails-${weekNum}" style="display:none;">
-                    <div class="hyrox-section-title">🌧️ Option B - Détails</div>
+                    <div class="hyrox-section-title">ðŸŒ§ï¸ Option B - DÃ©tails</div>
                     <div class="hyrox-section-content">
                         <strong>Format:</strong> ${hyrox.option_b.format}<br><br>
                         <strong>Contenu:</strong><br>${hyrox.option_b.contenu}
@@ -1536,7 +1582,7 @@
             if (hyrox.objectifs) {
                 html += `
                     <div class="hyrox-section">
-                        <div class="hyrox-section-title">🎯 Objectifs</div>
+                        <div class="hyrox-section-title">ðŸŽ¯ Objectifs</div>
                         <div class="hyrox-section-content">${hyrox.objectifs}</div>
                     </div>
                 `;
@@ -1544,13 +1590,13 @@
             
             html += `
                 <button class="start-session-btn" id="startBtn-${weekNum}" onclick="startHyroxSession(${weekNum})" disabled>
-                    ▶️ Démarrer la séance
+                    â–¶ï¸ DÃ©marrer la sÃ©ance
                 </button>
                 
                 <div class="session-notes">
-                    <div class="notes-label">📝 Notes de séance</div>
+                    <div class="notes-label">ðŸ“ Notes de sÃ©ance</div>
                     <textarea class="notes-input" id="notes-${weekNum}" 
-                        placeholder="Ajoute tes notes ici (sensations, temps, difficultés...)"
+                        placeholder="Ajoute tes notes ici (sensations, temps, difficultÃ©s...)"
                         onchange="saveSessionNotes(${weekNum})">${notes}</textarea>
                 </div>
             `;
@@ -1559,7 +1605,7 @@
             if (history.length > 0) {
                 html += `
                     <div class="hyrox-history">
-                        <div class="history-title">📊 Historique des séances</div>
+                        <div class="history-title">ðŸ“Š Historique des sÃ©ances</div>
                 `;
                 
                 history.forEach((session, idx) => {
@@ -1578,7 +1624,7 @@
                                         style="padding: 4px 8px; background: var(--accent-rest); color: white; 
                                                border: none; border-radius: 4px; cursor: pointer; font-size: 11px;"
                                         title="Supprimer">
-                                    🗑️
+                                    ðŸ—‘ï¸
                                 </button>
                             </div>
                             <div class="history-stats">
@@ -1721,7 +1767,11 @@
                         config.restTime = (restMin * 60 + restSec) * 1000;
                     }
                     
-                    config.exercises = [optionData.contenu.split('\n')[0]];
+                    // Parser TOUTES les lignes d'exercices (ignorer les lignes vides et "repos")
+                    const lines = optionData.contenu.split('\n');
+                    config.exercises = lines
+                        .filter(line => line.trim() && !line.toLowerCase().includes('repos'))
+                        .map(line => line.trim());
                 }
             }
             // Detect AMRAP
@@ -1731,6 +1781,12 @@
                 if (match) {
                     config.totalTime = parseInt(match[1]) * 60 * 1000;
                 }
+                
+                // Parser les exercices de l'AMRAP
+                const lines = optionData.contenu.split('\n');
+                config.exercises = lines
+                    .filter(line => line.trim())
+                    .map(line => line.trim());
             }
             
             openTimer(config);
@@ -1770,7 +1826,7 @@
         
         function closeTimer() {
             if (timerInterval) {
-                if (confirm('Arrêter la séance en cours ?')) {
+                if (confirm('ArrÃªter la sÃ©ance en cours ?')) {
                     stopTimer();
                     document.getElementById('timerModal').classList.remove('active');
                 }
@@ -1782,6 +1838,24 @@
         function startTimer() {
             if (timerInterval) return;
             
+            // Demander activation son AVANT de dÃ©marrer le timer (non-bloquant)
+            if (!window.audioEnabled && currentTimerConfig.type === 'emom') {
+                // En mode PWA, activer automatiquement
+                if (window.isPWA) {
+                    setTimeout(() => enableAudio(), 100);
+                }
+                // En mode navigateur, demander (mais ne pas bloquer le timer)
+                else {
+                    setTimeout(() => {
+                        const activate = confirm('ðŸ”Š Activer le son pour les bips EMOM ?\n\n(RecommandÃ© pour entendre les changements de minute)');
+                        if (activate) {
+                            enableAudio();
+                        }
+                    }, 500);
+                }
+            }
+            
+            // TOUJOURS dÃ©marrer le timer (ne pas attendre le son)
             timerStartTime = Date.now() - timerElapsed;
             timerPaused = false;
             
@@ -1834,7 +1908,7 @@
             }
         
             
-            // Vider l'affichage des rounds (l'historique global est sauvegardé)
+            // Vider l'affichage des rounds (l'historique global est sauvegardÃ©)
             const roundList = document.getElementById('roundList');
             const roundHistory = document.getElementById('roundHistory');
             if (roundList) roundList.innerHTML = '';
@@ -1850,12 +1924,12 @@
                 navigator.vibrate(200);
             }
             
-            playBell();
+            playBellAndVibrate();
             
             // Update history display
             updateRoundHistory();
             
-            // Pour FOR TIME: chrono continue, pas d'arrêt auto
+            // Pour FOR TIME: chrono continue, pas d'arrÃªt auto
             // L'utilisateur doit cliquer "Terminer" manuellement
             
             renderTimerControls();
@@ -1881,10 +1955,10 @@
                 if (newRound !== currentRound && newRound < currentTimerConfig.totalRounds) {
                     currentRound = newRound;
                     currentMinute = 0;
-                    playBell();
+                    playBellAndVibrate();
                 } else if (newMinute !== currentMinute) {
                     currentMinute = newMinute;
-                    playBell();
+                    playBellAndVibrate();
                 }
                 
                 document.getElementById('timerRound').textContent = `Round ${currentRound + 1}/${currentTimerConfig.totalRounds}`;
@@ -1897,10 +1971,29 @@
                 document.getElementById('timerRound').textContent = `Round ${currentRound + 1}/${currentTimerConfig.totalRounds}`;
                 document.getElementById('timerMinute').textContent = '';
                 
-                // Afficher TOUS les exercices de la séance
-                const allExercises = currentTimerConfig.exercises.join(' + ');
+                // Afficher TOUS les exercices de la sÃ©ance
+                const allExercises = currentTimerConfig.exercises.join(' • ');
                 document.getElementById('timerExercise').textContent = allExercises || 'FOR TIME';
-                document.getElementById('timerDetails').textContent = '';
+                
+                // Afficher le temps de repos si défini
+                if (currentTimerConfig.restTime > 0) {
+                    const restMin = Math.floor(currentTimerConfig.restTime / 60000);
+                    const restSec = Math.floor((currentTimerConfig.restTime % 60000) / 1000);
+                    document.getElementById('timerDetails').textContent = `Repos: ${restMin}:${restSec.toString().padStart(2, '0')} entre rounds`;
+                } else {
+                    document.getElementById('timerDetails').textContent = '';
+                }
+            } else if (currentTimerConfig.type === 'amrap') {
+                document.getElementById('timerRound').textContent = '';
+                const remainingMs = currentTimerConfig.totalTime - timerElapsed;
+                const remainingMin = Math.floor(remainingMs / 60000);
+                const remainingSec = Math.floor((remainingMs % 60000) / 1000);
+                document.getElementById('timerMinute').textContent = `Temps restant: ${remainingMin}:${remainingSec.toString().padStart(2, '0')}`;
+                
+                // Afficher tous les exercices de l'AMRAP
+                const allExercises = currentTimerConfig.exercises.join(' • ');
+                document.getElementById('timerExercise').textContent = allExercises || 'AMRAP';
+                document.getElementById('timerDetails').textContent = 'Faire le maximum de tours';
             } else {
                 document.getElementById('timerRound').textContent = '';
                 document.getElementById('timerMinute').textContent = '';
@@ -1952,38 +2045,38 @@
                 // Not started
                 controls.innerHTML = `
                     <button class="timer-btn timer-btn-primary" onclick="startTimer()">
-                        ▶️ Démarrer
+                        â–¶ï¸ DÃ©marrer
                     </button>
                     <button class="timer-btn timer-btn-secondary" onclick="closeTimer()">
-                        ✕ Annuler
+                        âœ• Annuler
                     </button>
                 `;
             } else if (timerInterval) {
                 // Running
                 let html = `
                     <button class="timer-btn timer-btn-secondary" onclick="pauseTimer()">
-                        ⏸️ Pause
+                        â¸ï¸ Pause
                     </button>
                 `;
                 
                 if (currentTimerConfig.type === 'fortime') {
                     html += `
                         <button class="timer-btn timer-btn-primary" onclick="completeRound()">
-                            ✓ Tour fini
+                            âœ“ Tour fini
                         </button>
                     `;
                 }
                 
                 html += `
                     <button class="timer-btn timer-btn-danger" onclick="stopTimer(); closeTimer();">
-                        ⏹️ Terminer
+                        â¹ï¸ Terminer
                     </button>
                 `;
                 
                 if (!distanceViewMode) {
                     html += `
                         <button class="timer-btn timer-btn-secondary" onclick="toggleDistanceView()">
-                            📺 Vue distance
+                            ðŸ“º Vue distance
                         </button>
                     `;
                 }
@@ -1993,10 +2086,10 @@
                 // Paused
                 controls.innerHTML = `
                     <button class="timer-btn timer-btn-primary" onclick="startTimer()">
-                        ▶️ Reprendre
+                        â–¶ï¸ Reprendre
                     </button>
                     <button class="timer-btn timer-btn-danger" onclick="stopTimer(); closeTimer();">
-                        ⏹️ Terminer
+                        â¹ï¸ Terminer
                     </button>
                 `;
             }
@@ -2004,7 +2097,7 @@
             if (distanceViewMode) {
                 controls.innerHTML = `
                     <button class="timer-btn timer-btn-secondary" onclick="toggleDistanceView()">
-                        ← Retour normal
+                        â† Retour normal
                     </button>
                 `;
             }
@@ -2056,7 +2149,7 @@
                             </div>
                         </div>
                         ${weekMuscu.notes && weekMuscu.notes !== 'nan' ? `
-                            <div class="week-notes">⚠️ ${weekMuscu.notes}</div>
+                            <div class="week-notes">âš ï¸ ${weekMuscu.notes}</div>
                         ` : ''}
                     </div>
                     
@@ -2064,7 +2157,7 @@
                         <div class="session-card session-upper ${upperCompleted ? 'completed' : ''}">
                             <div class="session-header">
                                 <div class="session-type">
-                                    <div class="session-icon upper">💪</div>
+                                    <div class="session-icon upper">ðŸ’ª</div>
                                     <span class="session-name">Upper Body</span>
                                 </div>
                                 <div class="session-actions">
@@ -2085,7 +2178,7 @@
                         <div class="session-card session-lower ${lowerCompleted ? 'completed' : ''}">
                             <div class="session-header">
                                 <div class="session-type">
-                                    <div class="session-icon lower">🦵</div>
+                                    <div class="session-icon lower">ðŸ¦µ</div>
                                     <span class="session-name">Lower Body</span>
                                 </div>
                                 <div class="session-actions">
@@ -2106,8 +2199,8 @@
                         <div class="session-card session-hyrox ${hyroxCompleted ? 'completed' : ''}">
                             <div class="session-header">
                                 <div class="session-type">
-                                    <div class="session-icon hyrox">⚡</div>
-                                    <span class="session-name">Hyrox Spécifique</span>
+                                    <div class="session-icon hyrox">âš¡</div>
+                                    <span class="session-name">Hyrox SpÃ©cifique</span>
                                 </div>
                                 <div class="session-actions">
                                     <span class="session-badge">Timer PRO</span>
@@ -2151,5 +2244,30 @@
         
         setInterval(updateCountdown, 3600000);
     </script>
+
+    <!-- Service Worker Registration -->
+    <script>
+        // Enregistrer le Service Worker pour PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./service-worker.js')
+                    .then(registration => {
+                        console.log('âœ… Service Worker enregistrÃ©:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.error('âŒ Erreur Service Worker:', error);
+                    });
+            });
+        }
+        
+        // DÃ©tecter si lancÃ© en mode PWA (standalone)
+        window.isPWA = window.matchMedia('(display-mode: standalone)').matches || 
+                       window.navigator.standalone === true;
+        
+        if (window.isPWA) {
+            console.log('ðŸš€ App lancÃ©e en mode PWA');
+        }
+    </script>
+    
 </body>
 </html>
