@@ -1066,6 +1066,20 @@
             }
         }
     </style>
+
+    <!-- PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Hyrox Pro">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#00ff88">
+    
+    <!-- Manifest -->
+    <link rel="manifest" href="./manifest.json">
+    
+    <!-- Apple Touch Icon -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect fill='%230a0e14' width='512' height='512'/%3E%3Ctext x='256' y='340' font-size='280' text-anchor='middle' fill='%2300ff88' font-family='Arial,sans-serif' font-weight='bold'%3E⚡%3C/text%3E%3C/svg%3E">
+    
 </head>
 <body>
     <div class="container">
@@ -1197,97 +1211,38 @@
         // Generate bell sound (simple sine wave)
         function initBellSound() {
             const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const duration = 0.6;
+            const duration = 0.3;
             const sampleRate = audioContext.sampleRate;
             const numSamples = duration * sampleRate;
             const buffer = audioContext.createBuffer(1, numSamples, sampleRate);
             const data = buffer.getChannelData(0);
             
-            // Cloche douce (La5 + harmonique)
             for (let i = 0; i < numSamples; i++) {
                 const t = i / sampleRate;
-                const envelope = Math.exp(-t * 5);
-                const freq1 = 880;  // La5
-                const freq2 = 1320; // Harmonique
-                data[i] = (
-                    Math.sin(2 * Math.PI * freq1 * t) * 0.6 +
-                    Math.sin(2 * Math.PI * freq2 * t) * 0.3
-                ) * envelope * 0.8; // Volume fort
+                const freq = 800;
+                const envelope = Math.exp(-t * 8);
+                data[i] = Math.sin(2 * Math.PI * freq * t) * envelope * 0.3;
             }
             
             window.bellBuffer = buffer;
             window.audioContext = audioContext;
-            window.audioEnabled = false;
-            
-            console.log('🔔 Audio initialisé');
-        }
-        
-        function enableAudio() {
-            if (!window.audioContext) {
-                console.error('❌ AudioContext non disponible');
-                return false;
-            }
-            
-            // Resume audio context
-            if (window.audioContext.state === 'suspended') {
-                window.audioContext.resume();
-            }
-            
-            // Play silent sound to unlock
-            try {
-                const source = window.audioContext.createBufferSource();
-                const silentBuffer = window.audioContext.createBuffer(1, 1, window.audioContext.sampleRate);
-                source.buffer = silentBuffer;
-                source.connect(window.audioContext.destination);
-                source.start();
-                
-                window.audioEnabled = true;
-                console.log('✅ Audio activé et débloqué');
-                return true;
-            } catch (e) {
-                console.error('❌ Erreur activation audio:', e);
-                return false;
-            }
         }
         
         function playBell() {
-            if (!window.audioContext || !window.bellBuffer) {
-                console.error('❌ Audio non initialisé');
-                return;
-            }
+            if (!window.audioContext || !window.bellBuffer) return;
             
-            if (!window.audioEnabled) {
-                console.warn('⚠️  Audio non activé');
-                return;
-            }
-            
-            try {
-                const source = window.audioContext.createBufferSource();
-                source.buffer = window.bellBuffer;
-                const gainNode = window.audioContext.createGain();
-                gainNode.gain.value = 1.0;
-                source.connect(gainNode);
-                gainNode.connect(window.audioContext.destination);
-                source.start();
-                console.log('🔔 BIP -', new Date().toLocaleTimeString());
-            } catch (e) {
-                console.error('❌ Erreur playBell:', e);
-            }
+            const source = window.audioContext.createBufferSource();
+            source.buffer = window.bellBuffer;
+            source.connect(window.audioContext.destination);
+            source.start();
             
             // Vibration
             if (navigator.vibrate) {
-                navigator.vibrate([200, 100, 200]);
-            }
-            
-            // Flash visuel
-            const timerTime = document.getElementById('timerTime');
-            if (timerTime) {
-                timerTime.style.animation = 'pulse 0.3s ease-in-out';
-                setTimeout(() => { timerTime.style.animation = ''; }, 300);
+                navigator.vibrate(200);
             }
         }
-
-                // LocalStorage management
+        
+        // LocalStorage management
         function loadCompletions() {
             const saved = localStorage.getItem('hyrox_completions_v3');
             return saved ? JSON.parse(saved) : {};
@@ -1780,9 +1735,7 @@
                         config.restTime = (restMin * 60 + restSec) * 1000;
                     }
                     
-                    // Parser TOUS les exercices (pas juste la première ligne)
-                    const lines = optionData.contenu.split('\n').filter(line => line.trim());
-                    config.exercises = lines;
+                    config.exercises = [optionData.contenu.split('\n')[0]];
                 }
             }
             // Detect AMRAP
@@ -1791,21 +1744,7 @@
                 const match = format.match(/(\d+)min/i);
                 if (match) {
                     config.totalTime = parseInt(match[1]) * 60 * 1000;
-                
-                // Parser les exercices pour AMRAP
-                const lines = optionData.contenu.split('\n').filter(line => line.trim());
-                config.exercises = lines;
                 }
-            // Detect TEST
-            else if (format.includes('test') || optionData.contenu.toLowerCase().includes('test')) {
-                config.type = 'test';
-            
-            // Simplifier affichage TAPER
-            if (format.toLowerCase().includes('taper')) {
-                config.exercises = ['TAPER - Activation'];
-            }
-                config.exercises = [optionData.contenu.split('\n')[0] || 'Test en cours'];
-            }
             }
             
             openTimer(config);
@@ -1857,8 +1796,12 @@
         function startTimer() {
             if (timerInterval) return;
             
-            // Vérifier si audio activé, sinon demander
-            if (!window.audioEnabled && currentTimerConfig.type === 'emom') {
+            // En mode PWA, activer le son automatiquement au premier démarrage
+            if (window.isPWA && !window.audioEnabled && currentTimerConfig.type === 'emom') {
+                enableAudio();
+            }
+            // En mode navigateur, demander confirmation
+            else if (!window.isPWA && !window.audioEnabled && currentTimerConfig.type === 'emom') {
                 const activate = confirm('🔊 Activer le son pour les bips EMOM ?\n\n(Recommandé pour entendre les changements de minute)');
                 if (activate) {
                     enableAudio();
@@ -1976,37 +1919,13 @@
                 const exerciseIdx = currentMinute % currentTimerConfig.exercises.length;
                 document.getElementById('timerExercise').textContent = currentTimerConfig.exercises[exerciseIdx] || '';
                 document.getElementById('timerDetails').textContent = '';
-            } else if (currentTimerConfig.type === 'fortime' || currentTimerConfig.type === 'test') {
+            } else if (currentTimerConfig.type === 'fortime') {
                 document.getElementById('timerRound').textContent = `Round ${currentRound + 1}/${currentTimerConfig.totalRounds}`;
                 document.getElementById('timerMinute').textContent = '';
                 
                 // Afficher TOUS les exercices de la séance
                 const allExercises = currentTimerConfig.exercises.join(' + ');
                 document.getElementById('timerExercise').textContent = allExercises || 'FOR TIME';
-                document.getElementById('timerDetails').textContent = '';
-            } else if (currentTimerConfig.type === 'amrap') {
-                document.getElementById('timerRound').textContent = '';
-                document.getElementById('timerMinute').textContent = '';
-                
-                // Afficher tous les exercices de l'AMRAP
-                if (currentTimerConfig.exercises && currentTimerConfig.exercises.length > 0) {
-                    const exerciseList = currentTimerConfig.exercises.join(' • ');
-                    document.getElementById('timerExercise').textContent = exerciseList;
-                
-            } else if (currentTimerConfig.type === 'test') {
-                document.getElementById('timerRound').textContent = '';
-                document.getElementById('timerMinute').textContent = '';
-                
-                // Afficher l'exercice du test
-                if (currentTimerConfig.exercises && currentTimerConfig.exercises.length > 0) {
-                    document.getElementById('timerExercise').textContent = currentTimerConfig.exercises[0];
-                } else {
-                    document.getElementById('timerExercise').textContent = 'Test en cours';
-                }
-                document.getElementById('timerDetails').textContent = '';
-            } else {
-                    document.getElementById('timerExercise').textContent = 'AMRAP en cours';
-                }
                 document.getElementById('timerDetails').textContent = '';
             } else {
                 document.getElementById('timerRound').textContent = '';
@@ -2073,7 +1992,7 @@
                     </button>
                 `;
                 
-                if (currentTimerConfig.type === 'fortime' || currentTimerConfig.type === 'test') {
+                if (currentTimerConfig.type === 'fortime') {
                     html += `
                         <button class="timer-btn timer-btn-primary" onclick="completeRound()">
                             ✓ Tour fini
@@ -2258,5 +2177,30 @@
         
         setInterval(updateCountdown, 3600000);
     </script>
+
+    <!-- Service Worker Registration -->
+    <script>
+        // Enregistrer le Service Worker pour PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./service-worker.js')
+                    .then(registration => {
+                        console.log('✅ Service Worker enregistré:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.error('❌ Erreur Service Worker:', error);
+                    });
+            });
+        }
+        
+        // Détecter si lancé en mode PWA (standalone)
+        window.isPWA = window.matchMedia('(display-mode: standalone)').matches || 
+                       window.navigator.standalone === true;
+        
+        if (window.isPWA) {
+            console.log('🚀 App lancée en mode PWA');
+        }
+    </script>
+    
 </body>
 </html>
