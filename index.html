@@ -1416,8 +1416,7 @@
             return html;
         }
         
-        
-        
+
         // Render finishers for Upper/Lower
         function renderFinishers(weekNum, type) {
             const finishers = trainingData.finishers;
@@ -1426,64 +1425,51 @@
             const options = type === 'upper' ? finishers.upper : finishers.lower;
             if (!options || options.length === 0) return '';
             
-            const selectedKey = `w${weekNum}-${type}-finisher`;
+            const selectedKey = 'w' + weekNum + '-' + type + '-finisher';
             const selected = localStorage.getItem(selectedKey);
             
-            let html = `
-                <div class="finishers-section" style="margin-top: 16px; padding: 16px; background: var(--bg-exercise); border-radius: 12px;">
-                    <div class="finishers-title" style="font-size: 14px; font-weight: 700; color: var(--accent-secondary); margin-bottom: 12px;">
-                        ⚡ Finisher (optionnel)
-                    </div>
-                    <div style="display: flex; gap: 12px; margin-bottom: 12px;">
-            `;
+            let html = '<div class="finishers-section" style="margin-top: 16px; padding: 16px; background: var(--bg-exercise); border-radius: 12px;">';
+            html += '<div class="finishers-title" style="font-size: 14px; font-weight: 700; color: var(--accent-secondary); margin-bottom: 12px;">⚡ Finisher (optionnel)</div>';
+            html += '<div style="display: flex; gap: 12px; margin-bottom: 12px;">';
             
-            options.forEach((opt, idx) => {
+            options.forEach(function(opt, idx) {
                 const isSelected = selected === opt.code;
-                html += `
-                    <div class="finisher-option" 
-                         style="flex: 1; padding: 12px; background: ${isSelected ? 'rgba(0, 255, 136, 0.1)' : 'var(--bg-card)'}; 
-                                border: 2px solid ${isSelected ? 'var(--accent-primary)' : 'var(--border)'}; 
-                                border-radius: 8px; cursor: pointer; transition: all 0.2s;"
-                         onclick="selectFinisher(${weekNum}, '${type}', '${opt.code}')">
-                        <div style="font-weight: 600; margin-bottom: 4px;">${opt.code}: ${opt.nom}</div>
-                        <div style="font-size: 12px; color: var(--text-muted);">${opt.format}</div>
-                    </div>
-                `;
+                const bgColor = isSelected ? 'rgba(0, 255, 136, 0.1)' : 'var(--bg-card)';
+                const borderColor = isSelected ? 'var(--accent-primary)' : 'var(--border)';
+                
+                html += '<div class="finisher-option" ';
+                html += 'style="flex: 1; padding: 12px; background: ' + bgColor + '; ';
+                html += 'border: 2px solid ' + borderColor + '; border-radius: 8px; cursor: pointer; transition: all 0.2s;" ';
+                html += 'onclick="selectFinisher(' + weekNum + ', \'' + type + '\', \'' + opt.code + '\')">';
+                html += '<div style="font-weight: 600; margin-bottom: 4px;">' + opt.code + ': ' + opt.nom + '</div>';
+                html += '<div style="font-size: 12px; color: var(--text-muted);">' + opt.format + '</div>';
+                html += '</div>';
             });
             
-            html += `
-                    </div>
-                    <div id="finisherDetails-${weekNum}-${type}" style="display: ${selected ? 'block' : 'none'};">
-                `;
+            html += '</div>';
+            html += '<div id="finisherDetails-' + weekNum + '-' + type + '" style="display: ' + (selected ? 'block' : 'none') + ';">';
             
-            options.forEach(opt => {
+            options.forEach(function(opt) {
                 const isSelected = selected === opt.code;
-                html += `
-                    <div id="finisher-${opt.code}-${weekNum}" style="display: ${isSelected ? 'block' : 'none'}; padding: 12px; background: var(--bg-card); border-radius: 8px; font-size: 13px; line-height: 1.6;">
-                        <strong>Contenu:</strong><br>
-                        ${opt.contenu.replace(/
-/g, '<br>')}
-                    </div>
-                `;
+                html += '<div id="finisher-' + opt.code + '-' + weekNum + '" ';
+                html += 'style="display: ' + (isSelected ? 'block' : 'none') + '; padding: 12px; background: var(--bg-card); border-radius: 8px; font-size: 13px; line-height: 1.6;">';
+                html += '<strong>Contenu:</strong><br>';
+                html += opt.contenu.replace(/\n/g, '<br>');
+                html += '</div>';
             });
             
-            html += `
-                    </div>
-                </div>
-            `;
+            html += '</div></div>';
             
             return html;
         }
         
         function selectFinisher(weekNum, type, code) {
-            const key = `w${weekNum}-${type}-finisher`;
+            const key = 'w' + weekNum + '-' + type + '-finisher';
             const current = localStorage.getItem(key);
             
             if (current === code) {
-                // Déselectionner
                 localStorage.removeItem(key);
             } else {
-                // Sélectionner
                 localStorage.setItem(key, code);
             }
             
@@ -1494,7 +1480,7 @@
             showWeek(currentWeek);
         }
 
-        // Render Hyrox session
+                // Render Hyrox session
         function renderHyroxSession(weekNum, hyrox) {
             const historyKey = `w${weekNum}`;
             const history = hyroxHistory[historyKey] || [];
@@ -1619,26 +1605,6 @@
             return html;
         }
         
-        function deleteHistory(weekNum, index) {
-            if (!confirm('Supprimer cet historique ?')) return;
-            
-            const historyKey = `w${weekNum}`;
-            if (hyroxHistory[historyKey]) {
-                hyroxHistory[historyKey].splice(index, 1);
-                if (hyroxHistory[historyKey].length === 0) {
-                    delete hyroxHistory[historyKey];
-                }
-                saveHyroxHistory();
-            }
-            
-            if (navigator.vibrate) {
-                navigator.vibrate(100);
-            }
-            
-            showWeek(currentWeek);
-        }
-
-        
         let selectedOption = {};
         
         function selectOption(weekNum, option) {
@@ -1674,6 +1640,26 @@
             hyroxNotes[`w${weekNum}`] = notes;
             saveHyroxNotes();
         }
+
+        function deleteHistory(weekNum, index) {
+            if (!confirm('Supprimer cet historique ?')) return;
+            
+            const historyKey = 'w' + weekNum;
+            if (hyroxHistory[historyKey]) {
+                hyroxHistory[historyKey].splice(index, 1);
+                if (hyroxHistory[historyKey].length === 0) {
+                    delete hyroxHistory[historyKey];
+                }
+                saveHyroxHistory();
+            }
+            
+            if (navigator.vibrate) {
+                navigator.vibrate(100);
+            }
+            
+            showWeek(currentWeek);
+        }
+
         
         // Start Hyrox session
         function startHyroxSession(weekNum) {
@@ -1843,27 +1829,25 @@
             completedSessions[`w${currentTimerConfig.weekNum}-hyrox`] = true;
             saveCompletions();
             
-            
-            
-            // Vider la liste des rounds affichée (l'historique global est déjà sauvegardé)
-            document.getElementById('roundList').innerHTML = '';
-            document.getElementById('roundHistory').style.display = 'none';
-            
             if (navigator.vibrate) {
                 navigator.vibrate([100, 50, 100]);
             }
+        
+            
+            // Vider l'affichage des rounds (l'historique global est sauvegardé)
+            const roundList = document.getElementById('roundList');
+            const roundHistory = document.getElementById('roundHistory');
+            if (roundList) roundList.innerHTML = '';
+            if (roundHistory) roundHistory.style.display = 'none';
+            
         }
         
         function completeRound() {
-            const currentTime = timerElapsed;
-            const lastRoundTime = roundTimes.reduce((a, b) => a + b, 0);
-            const thisRoundTime = currentTime - lastRoundTime;
-            
-            roundTimes.push(thisRoundTime);
+            roundTimes.push(timerElapsed - roundTimes.reduce((a, b) => a + b, 0));
             currentRound++;
             
             if (navigator.vibrate) {
-                navigator.vibrate([200, 100, 200]);
+                navigator.vibrate(200);
             }
             
             playBell();
@@ -1871,15 +1855,8 @@
             // Update history display
             updateRoundHistory();
             
-            // Pour FOR TIME: NE PAS arrêter le chrono, juste incrémenter le round
-            // Le chrono continue jusqu'à ce que l'utilisateur clique "Terminer"
-            
-            // Check if all rounds complete
-            if (currentTimerConfig.type === 'fortime' && currentRound >= currentTimerConfig.totalRounds) {
-                // Tous les rounds terminés, mais on laisse le chrono tourner
-                // L'utilisateur doit cliquer "Terminer" manuellement
-                console.log('✅ Tous les rounds terminés !');
-            }
+            // Pour FOR TIME: chrono continue, pas d'arrêt auto
+            // L'utilisateur doit cliquer "Terminer" manuellement
             
             renderTimerControls();
         }
@@ -1923,7 +1900,7 @@
                 // Afficher TOUS les exercices de la séance
                 const allExercises = currentTimerConfig.exercises.join(' + ');
                 document.getElementById('timerExercise').textContent = allExercises || 'FOR TIME';
-                document.getElementById('timerDetails').textContent = currentTimerConfig.restTime > 0 ? `Repos: ${currentTimerConfig.restTime/1000}s entre rounds` : '';
+                document.getElementById('timerDetails').textContent = '';
             } else {
                 document.getElementById('timerRound').textContent = '';
                 document.getElementById('timerMinute').textContent = '';
