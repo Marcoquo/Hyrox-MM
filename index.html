@@ -1721,11 +1721,7 @@
                         config.restTime = (restMin * 60 + restSec) * 1000;
                     }
                     
-                    // Parser TOUTES les lignes d'exercices (ignorer les lignes vides et "repos")
-                    const lines = optionData.contenu.split('\n');
-                    config.exercises = lines
-                        .filter(line => line.trim() && !line.toLowerCase().includes('repos'))
-                        .map(line => line.trim());
+                    config.exercises = [optionData.contenu.split('\n')[0]];
                 }
             }
             // Detect AMRAP
@@ -1735,12 +1731,6 @@
                 if (match) {
                     config.totalTime = parseInt(match[1]) * 60 * 1000;
                 }
-                
-                // Parser les exercices de l'AMRAP
-                const lines = optionData.contenu.split('\n');
-                config.exercises = lines
-                    .filter(line => line.trim())
-                    .map(line => line.trim());
             }
             
             openTimer(config);
@@ -1908,28 +1898,9 @@
                 document.getElementById('timerMinute').textContent = '';
                 
                 // Afficher TOUS les exercices de la séance
-                const allExercises = currentTimerConfig.exercises.join(' • ');
+                const allExercises = currentTimerConfig.exercises.join(' + ');
                 document.getElementById('timerExercise').textContent = allExercises || 'FOR TIME';
-                
-                // Afficher le temps de repos si défini
-                if (currentTimerConfig.restTime > 0) {
-                    const restMin = Math.floor(currentTimerConfig.restTime / 60000);
-                    const restSec = Math.floor((currentTimerConfig.restTime % 60000) / 1000);
-                    document.getElementById('timerDetails').textContent = `Repos: ${restMin}:${restSec.toString().padStart(2, '0')} entre rounds`;
-                } else {
-                    document.getElementById('timerDetails').textContent = '';
-                }
-            } else if (currentTimerConfig.type === 'amrap') {
-                document.getElementById('timerRound').textContent = '';
-                const remainingMs = currentTimerConfig.totalTime - timerElapsed;
-                const remainingMin = Math.floor(remainingMs / 60000);
-                const remainingSec = Math.floor((remainingMs % 60000) / 1000);
-                document.getElementById('timerMinute').textContent = `Temps restant: ${remainingMin}:${remainingSec.toString().padStart(2, '0')}`;
-                
-                // Afficher tous les exercices de l'AMRAP
-                const allExercises = currentTimerConfig.exercises.join(' • ');
-                document.getElementById('timerExercise').textContent = allExercises || 'AMRAP';
-                document.getElementById('timerDetails').textContent = 'Faire le maximum de tours';
+                document.getElementById('timerDetails').textContent = '';
             } else {
                 document.getElementById('timerRound').textContent = '';
                 document.getElementById('timerMinute').textContent = '';
