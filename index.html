@@ -1241,6 +1241,38 @@
                 navigator.vibrate(200);
             }
         }
+        function playBellAndVibrate() {
+            // VIBRATION - TOUJOURS (même sans son)
+            if (navigator.vibrate) {
+                navigator.vibrate([200, 100, 200]);
+            }
+            
+            // SON - seulement si activé
+            if (window.audioEnabled && window.audioContext && window.bellBuffer) {
+                try {
+                    const source = window.audioContext.createBufferSource();
+                    source.buffer = window.bellBuffer;
+                    const gainNode = window.audioContext.createGain();
+                    gainNode.gain.value = 1.0;
+                    source.connect(gainNode);
+                    gainNode.connect(window.audioContext.destination);
+                    source.start();
+                    console.log('🔔 BIP -', new Date().toLocaleTimeString());
+                } catch (e) {
+                    console.error('❌ Erreur playBell:', e);
+                }
+            } else {
+                console.log('⚡ Vibration seule (son non activé)');
+            }
+            
+            // Flash visuel
+            const timerTime = document.getElementById('timerTime');
+            if (timerTime) {
+                timerTime.style.animation = 'pulse 0.3s ease-in-out';
+                setTimeout(() => { timerTime.style.animation = ''; }, 300);
+            }
+        }
+
         
         // LocalStorage management
         function loadCompletions() {
@@ -1882,7 +1914,7 @@
                 navigator.vibrate(200);
             }
             
-            playBell();
+            playBellAndVibrate();
             
             // Update history display
             updateRoundHistory();
@@ -1913,10 +1945,10 @@
                 if (newRound !== currentRound && newRound < currentTimerConfig.totalRounds) {
                     currentRound = newRound;
                     currentMinute = 0;
-                    playBell();
+                    playBellAndVibrate();
                 } else if (newMinute !== currentMinute) {
                     currentMinute = newMinute;
-                    playBell();
+                    playBellAndVibrate();
                 }
                 
                 document.getElementById('timerRound').textContent = `Round ${currentRound + 1}/${currentTimerConfig.totalRounds}`;
