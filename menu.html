@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboards Training - Marc</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .dashboard-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .dashboard-card:active {
+            transform: scale(0.98);
+        }
+        .dashboard-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex items-center justify-center p-4">
+    <div class="max-w-md w-full">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold mb-2">🏋️ Training Hub</h1>
+            <p class="text-gray-400">Préparation Hyrox Pro 2026</p>
+            <div class="mt-2 text-sm text-gray-500">
+                <span class="inline-block bg-gray-800 px-3 py-1 rounded-full">📅 Semaine 3/13</span>
+            </div>
+        </div>
+
+        <!-- Dashboard Cards -->
+        <div class="space-y-4">
+            
+            <!-- Hyrox Dashboard -->
+            <a href="index.html" class="dashboard-card block bg-gradient-to-br from-blue-600 to-blue-800 p-6 rounded-2xl shadow-lg">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="text-5xl">💪</div>
+                    <div class="bg-blue-900 bg-opacity-50 px-3 py-1 rounded-full text-sm">
+                        Entraînement
+                    </div>
+                </div>
+                <h2 class="text-2xl font-bold mb-2">Dashboard Hyrox</h2>
+                <p class="text-blue-100 text-sm mb-3">Séances • Timers • Progressions</p>
+                <div class="flex items-center text-sm text-blue-200">
+                    <span>Accéder</span>
+                    <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </div>
+            </a>
+
+            <!-- Nutrition Dashboard -->
+            <a href="nutrition.html" class="dashboard-card block bg-gradient-to-br from-green-600 to-green-800 p-6 rounded-2xl shadow-lg">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="text-5xl">🥗</div>
+                    <div class="bg-green-900 bg-opacity-50 px-3 py-1 rounded-full text-sm">
+                        Nutrition
+                    </div>
+                </div>
+                <h2 class="text-2xl font-bold mb-2">Dashboard Nutrition</h2>
+                <p class="text-green-100 text-sm mb-3">Macros • Stats • Suivi quotidien</p>
+                <div class="flex items-center text-sm text-green-200">
+                    <span>Accéder</span>
+                    <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </div>
+            </a>
+
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="mt-8 bg-gray-800 p-4 rounded-xl">
+            <h3 class="text-sm font-semibold text-gray-400 mb-3">🎯 Objectif 2026</h3>
+            <div class="space-y-2 text-sm">
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-300">Hyrox Pro Toulouse</span>
+                    <span class="text-blue-400 font-semibold">22 Mars</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-300">Montanaspe 61km</span>
+                    <span class="text-green-400 font-semibold">5-6 Juin</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Protocol Summary -->
+        <div class="mt-4 bg-gray-800 p-4 rounded-xl">
+            <h3 class="text-sm font-semibold text-gray-400 mb-3">📋 Protocole Actuel</h3>
+            <div class="grid grid-cols-3 gap-3 text-center text-sm">
+                <div>
+                    <div class="text-blue-400 font-bold text-lg">170g</div>
+                    <div class="text-gray-400 text-xs">Protéines</div>
+                </div>
+                <div>
+                    <div class="text-green-400 font-bold text-lg">485-563g</div>
+                    <div class="text-gray-400 text-xs">Glucides</div>
+                </div>
+                <div>
+                    <div class="text-orange-400 font-bold text-lg">92-103g</div>
+                    <div class="text-gray-400 text-xs">Lipides</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="mt-6 text-center text-xs text-gray-500">
+            <p>Version 1.0 • Préparation Hyrox Pro 2026</p>
+            <p class="mt-1">📍 75-77kg • 🎯 2.2g/kg protéines</p>
+        </div>
+    </div>
+
+    <script>
+        // Animation d'entrée
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.dashboard-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    card.style.transition = 'opacity 0.5s, transform 0.5s';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+
+        // Vibration au tap (si supporté)
+        document.querySelectorAll('.dashboard-card').forEach(card => {
+            card.addEventListener('click', () => {
+                if ('vibrate' in navigator) {
+                    navigator.vibrate(10);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
