@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Nutrition - Marc</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen p-4">
+    <div id="root"></div>
+
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <script>
+        const { useState, useEffect, createElement: h } = React;
+
+        const TARGETS = {
+            'double': { name: 'Double séance', cal: 3475, p: 170, g: 510, l: 95 },
+            'hyrox': { name: 'Hyrox/Intense', cal: 3325, p: 170, g: 485, l: 92 },
+            'long': { name: 'Sortie longue >90min', cal: 3750, p: 170, g: 563, l: 103 },
+            'lendemain': { name: 'Lendemain sortie longue', cal: 3425, p: 170, g: 500, l: 95 },
+            'off': { name: 'OFF/Léger', cal: 3150, p: 170, g: 448, l: 86 }
+        };
+
+        // Storage utilities
+        const storage = {
+            get: (key) => {
+                try {
+                    const data = localStorage.getItem(key);
+                    return data ? JSON.parse(data) : null;
+                } catch (e) {
+                    return null;
+                }
+            },
+            set: (key, value) => {
+                try {
+                    localStorage.setItem(key, JSON.stringify(value));
+                    return true;
+                } catch (e) {
+                    return false;
+                }
+            },
+            remove: (key) => {
+                try {
+                    localStorage.removeItem(key);
+                    return true;
+                } catch (e) {
+                    return false;
+                }
+            },
+            getAll: () => {
+                try {
+                    const entries = [];
+                    for (let i = 0; i < localStorage.length; i++) {
+                        const key = localStorage.key(i);
+                        if (key && key.startsWith('nutrition:')) {
+                            const data = storage.get(key);
+                            if (data) entries.push(data);
+                        }
+                    }
+                    return entries.sort((a, b) => new Date(b.date) - new Date(a.date));
+                } catch (e) {
+                    return [];
+                }
+            }
+        };
+
+        function NutritionDashboard() {
+            const [dayType, setDayType] = useState('hyrox');
+            const [macros, setMacros] = useState({ p: '', g: '', l: '' });
+            const [weight, setWeight] = useState('');
+            const [history, setHistory] = useState([]);
+            const [view, setView] = useState('input');
+
+            useEffect(() => {
+                loadHistory();
+            }, []);
+
+            function loadHistory() {
+                setHistory(storage.getAll());
+            }
+
+            function saveEntry() {
+                const target = TARGETS[dayType];
+                const calories = parseInt(macros.p || 0) * 4 + parseInt(macros.g || 0) * 4 + parseInt(macros.l || 0) * 9;
+                
+                const entry = {
+                    date: new Date().toISOString().split('T')[0],
+                    time: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+                    dayType,
+                    dayName: target.name,
+                    macros: {
+                        p: parseInt(macros.p || 0),
+                        g: parseInt(macros.g || 0),
+                        l: parseInt(macros.l || 0),
+                        cal: calories
+                    },
+                    targets: {
+                        p: target.p,
+                        g: target.g,
+                        l: target.l,
+                        cal: target.cal
+                    },
+                    weight: parseFloat(weight) || null
+                };
+
+                if (storage.set(`nutrition:${entry.date}`, entry)) {
+                    loadHistory();
+                    setMacros({ p: '', g: '', l: '' });
+                    setWeight('');
+                    alert('✅ Entrée sauvegardée !');
+                } else {
+                    alert('❌ Erreur sauvegarde');
+                }
+            }
+
+            function deleteEntry(date) {
+                if (confirm('Supprimer cette entrée ?')) {
+                    if (storage.remove(`nutrition:${date}`)) {
+                        loadHistory();
+                    }
+                }
+            }
+
+            function getDiff(actual, target) {
+                const diff = actual - target;
+                const pct = (diff / target * 100).toFixed(1);
+                return { diff, pct };
+            }
+
+            function getColor(actual, target) {
+                const pct = Math.abs((actual - target) / target * 100);
+                if (pct > 10) return 'text-red-400';
+                if (pct > 5) return 'text-orange-400';
+                return 'text-green-400';
+            }
+
+            function getStats() {
+                const last7 = history.slice(0, 7);
+                if (last7.length === 0) return null;
+
+                const avg = {
+                    p: last7.reduce((s, e) => s + e.macros.p, 0) / last7.length,
+                    g: last7.reduce((s, e) => s + e.macros.g, 0) / last7.length,
+                    l: last7.reduce((s, e) => s + e.macros.l, 0) / last7.length,
+                    cal: last7.reduce((s, e) => s + e.macros.cal, 0) / last7.length,
+                    weight: last7.filter(e => e.weight).reduce((s, e) => s + e.weight, 0) / last7.filter(e => e.weight).length || null
+                };
+
+                const avgTarget = {
+                    p: last7.reduce((s, e) => s + e.targets.p, 0) / last7.length,
+                    g: last7.reduce((s, e) => s + e.targets.g, 0) / last7.length,
+                    l: last7.reduce((s, e) => s + e.targets.l, 0) / last7.length,
+                    cal: last7.reduce((s, e) => s + e.targets.cal, 0) / last7.length
+                };
+
+                return { avg, avgTarget, count: last7.length };
+            }
+
+            const target = TARGETS[dayType];
+            const currentCal = parseInt(macros.p || 0) * 4 + parseInt(macros.g || 0) * 4 + parseInt(macros.l || 0) * 9;
+            const stats = getStats();
+
+            return h('div', { className: 'max-w-4xl mx-auto' },
+                h('h1', { className: 'text-3xl font-bold text-center mb-6' }, '🎯 Dashboard Nutrition'),
+                
+                // Navigation
+                h('div', { className: 'flex gap-2 mb-6' },
+                    h('button', {
+                        onClick: () => setView('input'),
+                        className: `flex-1 py-2 rounded ${view === 'input' ? 'bg-blue-600' : 'bg-gray-700'}`
+                    }, '📝 Saisie'),
+                    h('button', {
+                        onClick: () => setView('stats'),
+                        className: `flex-1 py-2 rounded ${view === 'stats' ? 'bg-blue-600' : 'bg-gray-700'}`
+                    }, '📊 Stats'),
+                    h('button', {
+                        onClick: () => setView('history'),
+                        className: `flex-1 py-2 rounded ${view === 'history' ? 'bg-blue-600' : 'bg-gray-700'}`
+                    }, '📜 Historique')
+                ),
+
+                // INPUT VIEW
+                view === 'input' && h('div', { className: 'space-y-4' },
+                    // Type de jour
+                    h('div', { className: 'bg-gray-800 p-4 rounded-lg' },
+                        h('label', { className: 'block mb-2 font-semibold' }, 'Type de jour'),
+                        h('select', {
+                            value: dayType,
+                            onChange: (e) => setDayType(e.target.value),
+                            className: 'w-full p-3 bg-gray-700 rounded text-lg'
+                        }, 
+                            Object.entries(TARGETS).map(([key, val]) =>
+                                h('option', { key, value: key }, val.name)
+                            )
+                        )
+                    ),
+
+                    // Cibles
+                    h('div', { className: 'bg-blue-900 p-4 rounded-lg' },
+                        h('h3', { className: 'font-bold mb-2' }, '🎯 Cibles du jour'),
+                        h('div', { className: 'grid grid-cols-2 gap-2 text-sm' },
+                            h('div', null, 'Calories: ', h('span', { className: 'font-bold' }, `${target.cal} kcal`)),
+                            h('div', null, 'Poids cible: ', h('span', { className: 'font-bold' }, '75-77 kg')),
+                            h('div', null, 'Protéines: ', h('span', { className: 'font-bold' }, `${target.p}g`)),
+                            h('div', null, 'Glucides: ', h('span', { className: 'font-bold' }, `${target.g}g`)),
+                            h('div', null, 'Lipides: ', h('span', { className: 'font-bold' }, `${target.l}g`))
+                        )
+                    ),
+
+                    // Saisie macros
+                    h('div', { className: 'bg-gray-800 p-4 rounded-lg space-y-3' },
+                        h('h3', { className: 'font-bold mb-2' }, '📝 Macros réelles'),
+                        
+                        // Protéines
+                        h('div', null,
+                            h('label', { className: 'block mb-1' }, 'Protéines (g)'),
+                            h('input', {
+                                type: 'number',
+                                value: macros.p,
+                                onChange: (e) => setMacros({...macros, p: e.target.value}),
+                                className: 'w-full p-3 bg-gray-700 rounded text-lg',
+                                placeholder: target.p.toString()
+                            }),
+                            macros.p && h('div', { className: `mt-1 text-sm ${getColor(parseInt(macros.p), target.p)}` },
+                                `${getDiff(parseInt(macros.p), target.p).diff > 0 ? '+' : ''}${getDiff(parseInt(macros.p), target.p).diff}g (${getDiff(parseInt(macros.p), target.p).pct}%)`
+                            )
+                        ),
+
+                        // Glucides
+                        h('div', null,
+                            h('label', { className: 'block mb-1' }, 'Glucides (g)'),
+                            h('input', {
+                                type: 'number',
+                                value: macros.g,
+                                onChange: (e) => setMacros({...macros, g: e.target.value}),
+                                className: 'w-full p-3 bg-gray-700 rounded text-lg',
+                                placeholder: target.g.toString()
+                            }),
+                            macros.g && h('div', { className: `mt-1 text-sm ${getColor(parseInt(macros.g), target.g)}` },
+                                `${getDiff(parseInt(macros.g), target.g).diff > 0 ? '+' : ''}${getDiff(parseInt(macros.g), target.g).diff}g (${getDiff(parseInt(macros.g), target.g).pct}%)`
+                            )
+                        ),
+
+                        // Lipides
+                        h('div', null,
+                            h('label', { className: 'block mb-1' }, 'Lipides (g)'),
+                            h('input', {
+                                type: 'number',
+                                value: macros.l,
+                                onChange: (e) => setMacros({...macros, l: e.target.value}),
+                                className: 'w-full p-3 bg-gray-700 rounded text-lg',
+                                placeholder: target.l.toString()
+                            }),
+                            macros.l && h('div', { className: `mt-1 text-sm ${getColor(parseInt(macros.l), target.l)}` },
+                                `${getDiff(parseInt(macros.l), target.l).diff > 0 ? '+' : ''}${getDiff(parseInt(macros.l), target.l).diff}g (${getDiff(parseInt(macros.l), target.l).pct}%)`
+                            )
+                        ),
+
+                        // Calories
+                        (macros.p || macros.g || macros.l) && h('div', { className: 'pt-2 border-t border-gray-600' },
+                            h('div', { className: 'font-bold' }, 'Calories totales'),
+                            h('div', { className: `text-2xl ${getColor(currentCal, target.cal)}` },
+                                `${currentCal} kcal`,
+                                h('span', { className: 'text-sm ml-2' },
+                                    `(${getDiff(currentCal, target.cal).diff > 0 ? '+' : ''}${getDiff(currentCal, target.cal).diff} kcal)`
+                                )
+                            )
+                        )
+                    ),
+
+                    // Poids
+                    h('div', { className: 'bg-gray-800 p-4 rounded-lg' },
+                        h('label', { className: 'block mb-2 font-semibold' }, '⚖️ Poids du jour (optionnel)'),
+                        h('input', {
+                            type: 'number',
+                            step: '0.1',
+                            value: weight,
+                            onChange: (e) => setWeight(e.target.value),
+                            className: 'w-full p-3 bg-gray-700 rounded text-lg',
+                            placeholder: '76.5'
+                        }),
+                        weight && h('div', { 
+                            className: `mt-2 text-sm ${parseFloat(weight) >= 75 && parseFloat(weight) <= 77 ? 'text-green-400' : 'text-orange-400'}`
+                        },
+                            parseFloat(weight) >= 75 && parseFloat(weight) <= 77 ? '✅ Dans la cible (75-77kg)' : '⚠️ Hors cible (75-77kg)'
+                        )
+                    ),
+
+                    // Bouton
+                    h('button', {
+                        onClick: saveEntry,
+                        disabled: !macros.p || !macros.g || !macros.l,
+                        className: 'w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed p-4 rounded-lg text-xl font-bold'
+                    }, '✅ Sauvegarder')
+                ),
+
+                // STATS VIEW
+                view === 'stats' && stats && h('div', { className: 'space-y-4' },
+                    h('div', { className: 'bg-gray-800 p-4 rounded-lg' },
+                        h('h3', { className: 'font-bold text-xl mb-4' }, '📊 Statistiques 7 derniers jours'),
+                        h('div', { className: 'text-sm text-gray-400 mb-4' }, `Basé sur ${stats.count} entrées`),
+                        
+                        h('div', { className: 'space-y-3' },
+                            h('div', { className: 'bg-gray-700 p-3 rounded' },
+                                h('div', { className: 'text-gray-400 text-sm' }, 'Protéines moyenne'),
+                                h('div', { className: 'text-2xl font-bold' }, `${stats.avg.p.toFixed(0)}g`),
+                                h('div', { className: `text-sm ${getColor(stats.avg.p, stats.avgTarget.p)}` },
+                                    `Cible moy: ${stats.avgTarget.p.toFixed(0)}g (${getDiff(stats.avg.p, stats.avgTarget.p).pct}%)`
+                                )
+                            ),
+                            h('div', { className: 'bg-gray-700 p-3 rounded' },
+                                h('div', { className: 'text-gray-400 text-sm' }, 'Glucides moyenne'),
+                                h('div', { className: 'text-2xl font-bold' }, `${stats.avg.g.toFixed(0)}g`),
+                                h('div', { className: `text-sm ${getColor(stats.avg.g, stats.avgTarget.g)}` },
+                                    `Cible moy: ${stats.avgTarget.g.toFixed(0)}g (${getDiff(stats.avg.g, stats.avgTarget.g).pct}%)`
+                                )
+                            ),
+                            h('div', { className: 'bg-gray-700 p-3 rounded' },
+                                h('div', { className: 'text-gray-400 text-sm' }, 'Lipides moyenne'),
+                                h('div', { className: 'text-2xl font-bold' }, `${stats.avg.l.toFixed(0)}g`),
+                                h('div', { className: `text-sm ${getColor(stats.avg.l, stats.avgTarget.l)}` },
+                                    `Cible moy: ${stats.avgTarget.l.toFixed(0)}g (${getDiff(stats.avg.l, stats.avgTarget.l).pct}%)`
+                                )
+                            ),
+                            h('div', { className: 'bg-gray-700 p-3 rounded' },
+                                h('div', { className: 'text-gray-400 text-sm' }, 'Calories moyenne'),
+                                h('div', { className: 'text-2xl font-bold' }, `${stats.avg.cal.toFixed(0)} kcal`),
+                                h('div', { className: `text-sm ${getColor(stats.avg.cal, stats.avgTarget.cal)}` },
+                                    `Cible moy: ${stats.avgTarget.cal.toFixed(0)} kcal (${getDiff(stats.avg.cal, stats.avgTarget.cal).pct}%)`
+                                )
+                            ),
+                            stats.avg.weight && h('div', { className: 'bg-gray-700 p-3 rounded' },
+                                h('div', { className: 'text-gray-400 text-sm' }, 'Poids moyen'),
+                                h('div', { className: 'text-2xl font-bold' }, `${stats.avg.weight.toFixed(1)} kg`),
+                                h('div', { 
+                                    className: `text-sm ${stats.avg.weight >= 75 && stats.avg.weight <= 77 ? 'text-green-400' : 'text-orange-400'}`
+                                }, 'Cible: 75-77 kg')
+                            )
+                        )
+                    )
+                ),
+
+                view === 'stats' && !stats && h('div', { className: 'text-center text-gray-400 mt-10' },
+                    'Pas assez de données (minimum 1 entrée)'
+                ),
+
+                // HISTORY VIEW
+                view === 'history' && h('div', { className: 'space-y-3' },
+                    history.length === 0 && h('div', { className: 'text-center text-gray-400 mt-10' },
+                        'Aucune entrée encore'
+                    ),
+                    history.map(entry =>
+                        h('div', { key: entry.date, className: 'bg-gray-800 p-4 rounded-lg' },
+                            h('div', { className: 'flex justify-between items-start mb-2' },
+                                h('div', null,
+                                    h('div', { className: 'font-bold' }, entry.date),
+                                    h('div', { className: 'text-sm text-gray-400' }, entry.dayName)
+                                ),
+                                h('button', {
+                                    onClick: () => deleteEntry(entry.date),
+                                    className: 'text-red-400 text-sm'
+                                }, '🗑️')
+                            ),
+                            h('div', { className: 'grid grid-cols-2 gap-2 text-sm' },
+                                h('div', null,
+                                    h('span', { className: 'text-gray-400' }, 'P: '), `${entry.macros.p}g `,
+                                    h('span', { className: getColor(entry.macros.p, entry.targets.p) },
+                                        `(${getDiff(entry.macros.p, entry.targets.p).pct}%)`
+                                    )
+                                ),
+                                h('div', null,
+                                    h('span', { className: 'text-gray-400' }, 'G: '), `${entry.macros.g}g `,
+                                    h('span', { className: getColor(entry.macros.g, entry.targets.g) },
+                                        `(${getDiff(entry.macros.g, entry.targets.g).pct}%)`
+                                    )
+                                ),
+                                h('div', null,
+                                    h('span', { className: 'text-gray-400' }, 'L: '), `${entry.macros.l}g `,
+                                    h('span', { className: getColor(entry.macros.l, entry.targets.l) },
+                                        `(${getDiff(entry.macros.l, entry.targets.l).pct}%)`
+                                    )
+                                ),
+                                h('div', null,
+                                    h('span', { className: 'text-gray-400' }, 'Cal: '), `${entry.macros.cal} `,
+                                    h('span', { className: getColor(entry.macros.cal, entry.targets.cal) },
+                                        `(${getDiff(entry.macros.cal, entry.targets.cal).pct}%)`
+                                    )
+                                ),
+                                entry.weight && h('div', { className: 'col-span-2' },
+                                    h('span', { className: 'text-gray-400' }, 'Poids: '), `${entry.weight} kg`
+                                )
+                            )
+                        )
+                    )
+                )
+            );
+        }
+
+        ReactDOM.render(
+            React.createElement(NutritionDashboard),
+            document.getElementById('root')
+        );
+    </script>
+</body>
+</html>
