@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Programme Hybride 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0c;
+    --bg2: #111115;
+    --bg3: #18181f;
+    --border: #2a2a35;
+    --accent: #e8ff3c;
+    --accent2: #ff4d2e;
+    --accent3: #3caaff;
+    --text: #f0f0f0;
+    --muted: #666680;
+    --fb: #3caaff;
+    --hx: #e8ff3c;
+    --radius: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Barlow', sans-serif;
+    font-size: 15px;
+    min-height: 100vh;
+    overscroll-behavior: none;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 16px 12px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  .header-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 26px;
+    letter-spacing: 0.5px;
+    line-height: 1;
+    color: var(--accent);
+  }
+  .header-sub {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 400;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-top: 3px;
+  }
+  .phase-badge {
+    background: var(--accent);
+    color: #000;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 1px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    text-transform: uppercase;
+  }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    flex: 0 0 auto;
+    padding: 12px 20px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+  }
+  .tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+  .tab.hx-tab.active {
+    color: var(--hx);
+    border-bottom-color: var(--hx);
+  }
+
+  /* CONTENT */
+  .content { padding: 16px; max-width: 600px; margin: 0 auto; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* SECTION LABEL */
+  .section-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 20px 0 10px;
+  }
+  .section-label:first-child { margin-top: 0; }
+
+  /* CARD */
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+  .card-header {
+    display: flex;
+    align-items: center;
+    padding: 14px 16px;
+    cursor: pointer;
+    gap: 12px;
+    user-select: none;
+  }
+  .card-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .icon-force { background: rgba(60,170,255,0.15); }
+  .icon-hx { background: rgba(232,255,60,0.12); }
+  .icon-hinge { background: rgba(255,77,46,0.15); }
+  .icon-pull { background: rgba(100,255,150,0.12); }
+
+  .card-title-wrap { flex: 1; }
+  .card-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    letter-spacing: 0.3px;
+    line-height: 1.2;
+  }
+  .card-meta {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .card-arrow {
+    color: var(--muted);
+    font-size: 12px;
+    transition: transform 0.25s;
+  }
+  .card.open .card-arrow { transform: rotate(180deg); }
+
+  .card-body {
+    display: none;
+    border-top: 1px solid var(--border);
+    padding: 0 16px 16px;
+  }
+  .card.open .card-body { display: block; }
+
+  /* EXERCISE TABLE */
+  .ex-table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+  .ex-table th {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: left;
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .ex-table td {
+    padding: 10px 8px;
+    font-size: 13.5px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    vertical-align: top;
+    line-height: 1.4;
+  }
+  .ex-table tr:last-child td { border-bottom: none; }
+  .ex-name { font-weight: 500; color: var(--text); }
+  .ex-detail { color: var(--muted); font-size: 12px; margin-top: 2px; }
+  .badge-series {
+    background: rgba(60,170,255,0.15);
+    color: var(--fb);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+  .badge-hx {
+    background: rgba(232,255,60,0.12);
+    color: var(--hx);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+  .superset-tag {
+    display: inline-block;
+    background: rgba(255,77,46,0.15);
+    color: var(--accent2);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 1px 5px;
+    border-radius: 3px;
+    margin-left: 4px;
+    vertical-align: middle;
+  }
+
+  /* TEMPO GUIDE */
+  .tempo-info {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-top: 14px;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .tempo-info strong { color: var(--text); }
+
+  /* FINISHER */
+  .finisher-box {
+    margin-top: 14px;
+    background: var(--bg3);
+    border: 1px solid rgba(232,255,60,0.25);
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+  .finisher-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  .finisher-content {
+    font-size: 13px;
+    line-height: 1.8;
+    color: #f0f0f0;
+  }
+  .finisher-content .line { display: flex; gap: 8px; align-items: flex-start; color: #f0f0f0; }
+  .bullet { color: var(--accent); font-weight: 700; flex-shrink: 0; }
+
+  /* HX SESSION */
+  .hx-header-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .hx-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 28px;
+    color: var(--hx);
+    line-height: 1;
+    min-width: 28px;
+  }
+  .hx-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 1.2;
+  }
+  .hx-type {
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .hx-focus-tag {
+    margin-left: auto;
+    background: rgba(232,255,60,0.1);
+    color: var(--hx);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    text-align: center;
+    line-height: 1.4;
+    flex-shrink: 0;
+  }
+
+  .hx-block {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-top: 12px;
+  }
+  .hx-block-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--accent3);
+    margin-bottom: 10px;
+  }
+  .hx-line {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 13.5px;
+    line-height: 1.5;
+  }
+  .hx-line:last-child { border-bottom: none; padding-bottom: 0; }
+  .hx-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--hx);
+    flex-shrink: 0;
+    margin-top: 7px;
+  }
+  .hx-note {
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--muted);
+    font-style: italic;
+  }
+  .hx-cap {
+    margin-top: 10px;
+    display: inline-block;
+    background: rgba(255,77,46,0.15);
+    color: var(--accent2);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    padding: 3px 10px;
+    border-radius: 4px;
+  }
+
+  /* PHASES OVERVIEW */
+  .phase-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 10px;
+  }
+  .phase-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .phase-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 1.2;
+  }
+  .phase-date {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 3px;
+  }
+  .phase-chip {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    padding: 3px 10px;
+    border-radius: 4px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .chip-active { background: rgba(232,255,60,0.15); color: var(--hx); }
+  .chip-trail { background: rgba(100,255,150,0.12); color: #4dff8a; }
+  .chip-recup { background: rgba(255,255,255,0.07); color: var(--muted); }
+  .chip-hyrox { background: rgba(255,77,46,0.15); color: var(--accent2); }
+  .phase-bar {
+    height: 3px;
+    border-radius: 2px;
+    margin-top: 10px;
+    background: var(--border);
+    overflow: hidden;
+  }
+  .phase-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: var(--accent);
+  }
+
+  /* PERIODISATION TABLE */
+  .period-table { width: 100%; border-collapse: collapse; }
+  .period-table th {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: left;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg3);
+  }
+  .period-table td {
+    padding: 10px 10px;
+    font-size: 13px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .period-table tr:last-child td { border-bottom: none; }
+  .week-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--accent);
+  }
+  .deload-row td { opacity: 0.5; }
+  .deload-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.08);
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 2px 7px;
+    border-radius: 3px;
+    margin-left: 6px;
+  }
+
+  /* ROTATION */
+  .rotation-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .rotation-cell {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+  }
+  .rotation-week {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 22px;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .rotation-seance {
+    font-size: 13px;
+    color: var(--text);
+    margin-top: 4px;
+    font-weight: 500;
+  }
+  .rotation-note {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 3px;
+  }
+
+  /* FOCUS BAR */
+  .focus-section {
+    margin-top: 16px;
+    padding: 14px;
+    background: var(--bg3);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+  .focus-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .focus-item { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .focus-label { font-size: 13px; font-weight: 500; min-width: 110px; }
+  .focus-bar-wrap { flex: 1; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .focus-bar-fill { height: 100%; border-radius: 3px; }
+  .f1 { background: var(--accent2); width: 90%; }
+  .f2 { background: var(--accent); width: 85%; }
+  .f3 { background: var(--accent3); width: 80%; }
+  .f4 { background: #a855f7; width: 75%; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <div class="header-title">PROGRAMME 2026</div>
+      <div class="header-sub">Hybride · Hyrox Pro · Trail</div>
+    </div>
+    <div class="phase-badge">P1 — Base EF</div>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="showPanel('fb')">Muscu</button>
+  <button class="tab hx-tab" onclick="showPanel('hx')">Hyrox</button>
+  <button class="tab" onclick="showPanel('planning')">Planning</button>
+  <button class="tab" onclick="showPanel('phases')">Phases</button>
+</div>
+
+<!-- ===================== MUSCU ===================== -->
+<div id="panel-fb" class="panel active content">
+
+  <div class="focus-section">
+    <div class="focus-title">Focus points faibles</div>
+    <div class="focus-item">
+      <div class="focus-label">Wall Ball</div>
+      <div class="focus-bar-wrap"><div class="focus-bar-fill f1"></div></div>
+    </div>
+    <div class="focus-item">
+      <div class="focus-label">Sled Push</div>
+      <div class="focus-bar-wrap"><div class="focus-bar-fill f2"></div></div>
+    </div>
+    <div class="focus-item">
+      <div class="focus-label">Sandbag Lunges</div>
+      <div class="focus-bar-wrap"><div class="focus-bar-fill f3"></div></div>
+    </div>
+    <div class="focus-item">
+      <div class="focus-label">Burpees</div>
+      <div class="focus-bar-wrap"><div class="focus-bar-fill f4"></div></div>
+    </div>
+  </div>
+
+  <div class="section-label" style="margin-top:20px;">Full Body A — Push / Hinge</div>
+
+  <!-- BLOC A -->
+  <div class="card" id="card-fba-a">
+    <div class="card-header" onclick="toggleCard('card-fba-a')">
+      <div class="card-icon icon-force">💪</div>
+      <div class="card-title-wrap">
+        <div class="card-title">Bloc A — Force principale</div>
+        <div class="card-meta">Développé couché barre · 4 séries</div>
+      </div>
+      <div class="card-arrow">▼</div>
+    </div>
+    <div class="card-body">
+      <table class="ex-table">
+        <tr><th>Exercice</th><th>Séries × Reps</th><th>Tempo</th><th>Récup</th></tr>
+        <tr>
+          <td><div class="ex-name">Développé couché barre</div><div class="ex-detail">Charge : ~80-85% 1RM</div></td>
+          <td><span class="badge-series">4 × 4-6</span></td>
+          <td>30X0</td>
+          <td>2'30</td>
+        </tr>
+      </table>
+      <div class="tempo-info"><strong>30X0</strong> : 3s descente · 0 bas · Explosif montée · 0 haut</div>
+    </div>
+  </div>
+
+  <!-- BLOC B -->
+  <div class="card" id="card-fba-b">
+    <div class="card-header" onclick="toggleCard('card-fba-b')">
+      <div class="card-icon icon-hinge">🔗</div>
+      <div class="card-title-wrap">
+        <div class="card-title">Bloc B — Superset Hinge/Quad</div>
+        <div class="card-meta">Trapbar DL + Leg Extension · 3 séries</div>
+      </div>
+      <div class="card-arrow">▼</div>
+    </div>
+    <div class="card-body">
+      <table class="ex-table">
+        <tr><th>Exercice</th><th>Séries × Reps</th><th>Tempo</th><th>Récup</th></tr>
+        <tr>
+          <td><div class="ex-name">Trapbar Deadlift <span class="superset-tag">B1</span></div><div class="ex-detail">Chaîne postérieure · enchaîner vers B2</div></td>
+          <td><span class="badge-series">3 × 6-8</span></td>
+          <td>20X0</td>
+          <td>45s → B2</td>
+        </tr>
+        <tr>
+          <td><div class="ex-name">Leg Extension <span class="superset-tag">B2</span></div><div class="ex-detail">Antagoniste vrai · ischio vs quad</div></td>
+          <td><span class="badge-series">3 × 12-15</span></td>
+          <td>2010</td>
+          <td>90s</td>
+        </tr>
+      </table>
+      <div class="tempo-info"><strong>Superset B1→B2</strong> : enchaîner sans repos entre B1 et B2. 90s après B2 avant de reprendre B1.</div>
+    </div>
+  </div>
+
+  <!-- BLOC C -->
+  <div class="card" id="card-fba-c">
+    <div class="card-header" onclick="toggleCard('card-fba-c')">
+      <div class="card-icon icon-force">🔺</div>
+      <div class="card-title-wrap">
+        <div class="card-title">Bloc C — Superset Push/Pull Upper</div>
+        <div class="card-meta">Incliné haltères + Tirage horizontal · 3 séries</div>
+      </div>
+      <div class="card-arrow">▼</div>
+    </div>
+    <div class="card-body">
+      <table class="ex-table">
+        <tr><th>Exercice</th><th>Séries × Reps</th><th>Tempo</th><th>Récup</th></tr>
+        <tr>
+          <td><div class="ex-name">Développé incliné haltères <span class="superset-tag">C1</span></div><div class="ex-detail">Push upper · pectoraux/triceps</div></td>
+          <td><span class="badge-series">3 × 10-12</span></td>
+          <td>2010</td>
+          <td>30s → C2</td>
+        </tr>
+        <tr>
+          <td><div class="ex-name">Tirage horizontal poulie <span class="superset-tag">C2</span></div><div class="ex-detail">Pull upper · antagoniste vrai · coudes serrés</div></td>
+          <td><span class="badge-series">3 × 10-12</span></td>
+          <td>2010</td>
+          <td>75s</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- BLOC D -->
+  <div class="card" id="card-fba-d">
+    <div class="card-header" onclick="toggleCard('card-fba-d')">
+      <div class="card-icon icon-pull">🦵</div>
+      <div class="card-title-wrap">
+        <div class="card-title">Bloc D — Superset Hips/Core</div>
+        <div class="card-meta">Hip Thrust + Ab Wheel · 3 séries</div>
+      </div>
+      <div class="card-arrow">▼</div>
+    </div>
+    <div class="card-body">
+      <table class="ex-table">
+        <tr><th>Exercice</th><th>Séries × Reps</th><th>Tempo</th><th>Récup</th></tr>
+        <tr>
+          <td><div class="ex-name">Hip Thrust guidé <span class="superset-tag">D1</span></div><div class="ex-detail">Contraction 1s en haut</div></td>
+          <td><span class="badge-series">3 × 12-15</span></td>
+          <td>2011</td>
+          <td>30s → D2</td>
+        </tr>
+        <tr>
+          <td><div class="ex-name">Ab Wheel / Roulette <span class="superset-tag">D2</span></div><div class="ex-detail">Anti-extension · gainage dynamique · contrôle lombaire</div></td>
+          <td><span class="badge-series">3 × 10-12</span></td>
+          <td>2010</td>
+          <td>60s</td>
+        </tr>
+      </table>
+      <div class="tempo-info"><strong>Ab Wheel</strong> : si indisponible, remplacer par Dead Bug 10 reps/côté — même stimulus anti-extension.</div>
+    </div>
+  </div>
+
+  <!-- FINISHER A -->
+  <div class="finisher-box">
+    <div class="finisher-title">⚡ Finisher FB A — 8 min AMRAP</div>
+    <div class="finisher-content">
+      <div class="line"><span class="bullet">▸</span><span>10 Burpees</span></div>
+      <div class="line"><span class="bullet">▸</span><span>15 Goblet Squat KB 18kg</span></div>
+      <div class="line"><span class="bullet">▸</span><span>10 Pompes</span></div>
+      <div class="line" style="margin-top:6px;"><span class="bullet" style="color:var(--muted)">→</span><span style="color:var(--muted);font-size:12px;">Max rounds · noter le score · uniquement si &lt;55 min atteintes</span></div>
+    </div>
+  </div>
+
+  <div class="section-label" style="margin-top:24px;">Full Body B — Squat / Pull</div>
+
+  <!-- BLOC A FB B -->
+  <div class="card" id="card-fbb-a">
+    <div class="card-header" onclick="toggleCard('card-fbb-a')">
+      <div class="card-icon icon-force">💪</div>
+      <div class="card-title-wrap">
+        <div class="card-title">Bloc A — Force principale</div>
+        <div class="card-meta">Front Squat · 4 séries</div>
+      </div>
+      <div class="card-arrow">▼</div>
+    </div>
+    <div class="card-body">
+      <table class="ex-table">
+        <tr><th>Exercice</th><th>Séries × Reps</th><th>Tempo</th><th>Récup</th></tr>
+        <tr>
+          <td><div class="ex-name">Front Squat</div><div class="ex-detail">Charge : ~80-85% 1RM</div></td>
+          <td><span class="badge-series">4 × 4-6</span></td>
+          <td>30X0</td>
+          <td>2'30</td>
+        </tr>
+      </table>
+      <div class="tempo-info"><strong>Alternatif</strong> : Squat barre si front squat trop contraignant après run lourd.</div>
+    </div>
+  </div>
+
+  <!-- BLOC B FB B -->
+  <div class="card" id="card-fbb-b">
+    <div class="card-header" onclick="toggleCard('card-fbb-b')">
+      <div class="card-icon icon-pull">🔽</div>
+      <div class="card-title-wrap">
+        <div class="card-title">Bloc B — Superset Squat/Pull</div>
+        <div class="card-meta">Squat bulgare + Tirage vertical · 3 séries</div>
+      </div>
+      <div class="card-arrow">▼</div>
+    </div>
+    <div class="card-body">
+      <table class="ex-table">
+        <tr><th>Exercice</th><th>Séries × Reps</th><th>Tempo</th><th>Récup</th></tr>
+        <tr>
+          <td><div class="ex-name">Squat bulgare <span class="superset-tag">B1</span></div><div class="ex-detail">10 reps / jambe · fraîcheur maximale · charges additionnelles</div></td>
+          <td><span class="badge-series">3 × 10/j</span></td>
+          <td>2010</td>
+          <td>45s → B2</td>
+        </tr>
+        <tr>
+          <td><div class="ex-name">Tirage vertical <span class="superset-tag">B2</span></div><div class="ex-detail">Récupération lower pendant upper</div></td>
+          <td><span class="badge-series">3 × 8-10</span></td>
+          <td>2011</td>
+          <td>90s</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- BLOC C FB B -->
+  <div class="card" id="card-fbb-c">
+    <div class="card-header" onclick="toggleCard('card-fbb-c')">
+      <div class="card-icon icon-hinge">🪵</div>
+      <div class="card-title-wrap">
+        <div class="card-title">Bloc C — Superset Pull/Fentes</div>
+        <div class="card-meta">Tirage bûcheron + Fentes marchées · 3 séries</div>
+      </div>
+      <div class="card-arrow">▼</div>
+    </div>
+    <div class="card-body">
+      <table class="ex-table">
+        <tr><th>Exercice</th><th>Séries × Reps</th><th>Tempo</th><th>Récup</th></tr>
+        <tr>
+          <td><div class="ex-name">Tirage bûcheron <span class="superset-tag">C1</span></div></td>
+          <td><span class="badge-series">3 × 10-12</span></td>
+          <td>2010</td>
+          <td>30s → C2</td>
+        </tr>
+        <tr>
+          <td><div class="ex-name">Fentes marchées <span class="superset-tag">C2</span></div><div class="ex-detail">12 reps / jambe · haltères ou barre</div></td>
+          <td><span class="badge-series">3 × 12/j</span></td>
+          <td>2010</td>
+          <td>75s</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- BLOC D FB B -->
+  <div class="card" id="card-fbb-d">
+    <div class="card-header" onclick="toggleCard('card-fbb-d')">
+      <div class="card-icon icon-force">🎯</div>
+      <div class="card-title-wrap">
+        <div class="card-title">Bloc D — Superset Épaules Push/Pull</div>
+        <div class="card-meta">Développé haltères + Face Pull · 3 séries</div>
+      </div>
+      <div class="card-arrow">▼</div>
+    </div>
+    <div class="card-body">
+      <table class="ex-table">
+        <tr><th>Exercice</th><th>Séries × Reps</th><th>Tempo</th><th>Récup</th></tr>
+        <tr>
+          <td><div class="ex-name">Développé haltères <span class="superset-tag">D1</span></div><div class="ex-detail">Push épaule</div></td>
+          <td><span class="badge-series">3 × 12-15</span></td>
+          <td>2010</td>
+          <td>30s → D2</td>
+        </tr>
+        <tr>
+          <td><div class="ex-name">Face Pull câble <span class="superset-tag">D2</span></div><div class="ex-detail">Pull épaule · antagoniste vrai · protection coiffe des rotateurs</div></td>
+          <td><span class="badge-series">3 × 15-20</span></td>
+          <td>2020</td>
+          <td>60s</td>
+        </tr>
+      </table>
+      <div class="tempo-info"><strong>Face Pull</strong> : corde à la poulie haute, tirer vers le visage en écartant les mains. Coudes au-dessus des épaules.</div>
+    </div>
+  </div>
+
+  <!-- FINISHER B -->
+  <div class="finisher-box">
+    <div class="finisher-title">⚡ Finisher FB B — 3 rounds for time</div>
+    <div class="finisher-content">
+      <div class="line"><span class="bullet">▸</span><span>20m Sled Push (~50% race weight)</span></div>
+      <div class="line"><span class="bullet">▸</span><span>20m Farmers Carry (2×haltères lourds ou KB 18kg)</span></div>
+      <div class="line"><span class="bullet">▸</span><span>15 Box Step-Up avec KB 18kg</span></div>
+      <div class="line"><span class="bullet">▸</span><span>10 Burpees</span></div>
+      <div class="line" style="margin-top:6px;"><span class="bullet" style="color:var(--muted)">→</span><span style="color:var(--muted);font-size:12px;">Chrono · noter le temps total · si sled dispo · progression FC vers 2×32kg en P4</span></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===================== HYROX ===================== -->
+<div id="panel-hx" class="panel content" style="display:none;">
+
+  <!-- HX1 -->
+  <div class="card" id="card-hx1">
+    <div class="hx-header-bar" onclick="toggleCard('card-hx1')">
+      <div class="hx-num">1</div>
+      <div>
+        <div class="hx-title">FOR TIME — Sled + BBJ</div>
+        <div class="hx-type">Charge progressive · Time cap 18 min</div>
+      </div>
+      <div class="hx-focus-tag">SLED<br>BBJ</div>
+      <div class="card-arrow" style="margin-left:8px;">▼</div>
+    </div>
+    <div class="card-body">
+      <div class="hx-block">
+        <div class="hx-block-title">2 Rounds @ 100% — Sled Push 202kg</div>
+        <div class="hx-line"><div class="hx-dot"></div><div>25m Burpee Broad Jumps</div></div>
+        <div class="hx-line"><div class="hx-dot"></div><div>25m Sled Push @ <strong>202kg (race weight)</strong></div></div>
+        <div class="hx-line"><div class="hx-dot"></div><div>25 Wall Balls 9kg</div></div>
+      </div>
+      <div class="hx-block">
+        <div class="hx-block-title">2 Rounds @ 120% — Sled Push ~240kg</div>
+        <div class="hx-line"><div class="hx-dot"></div><div>25m Burpee Broad Jumps</div></div>
+        <div class="hx-line"><div class="hx-dot"></div><div>25m Sled Push @ <strong>~240kg</strong></div></div>
+        <div class="hx-line"><div class="hx-dot"></div><div>25 Wall Balls 9kg</div></div>
+      </div>
+      <div class="hx-block">
+        <div class="hx-block-title">2 Rounds @ 140% — Sled Push ~280kg</div>
+        <div class="hx-line"><div class="hx-dot"></div><div>25m Burpee Broad Jumps</div></div>
+        <div class="hx-line"><div class="hx-dot"></div><div>25m Sled Push @ <strong>~280kg</strong></div></div>
+        <div class="hx-line"><div class="hx-dot"></div><div>25 Wall Balls 9kg</div></div>
+      </div>
+      <div class="hx-cap">TIME CAP PART A : 18 MIN</div>
+      <div class="hx-block" style="margin-top:12px;">
+        <div class="hx-block-title">Part B — EMOM 8 MIN</div>
+        <div class="hx-line" style="color:var(--accent3)"><div class="hx-dot" style="background:var(--accent3)"></div><div><strong>Min IMPAIRS</strong></div></div>
+        <div class="hx-line"><div class="hx-dot"></div><div>10 Wall Balls 9kg + 5 Burpee Broad Jumps</div></div>
+        <div class="hx-line" style="color:var(--accent3);margin-top:4px"><div class="hx-dot" style="background:var(--accent3)"></div><div><strong>Min PAIRS</strong></div></div>
+        <div class="hx-line"><div class="hx-dot"></div><div>12 Cal Rowing</div></div>
+      </div>
+      <div class="hx-note">👉 Sled Push isolé — qualité technique et puissance. Part B sous fatigue. Durée totale ~26 min.</div>
+    </div>
+  </div>
+
+  <!-- HX2 -->
+  <div class="card" id="card-hx2">
+    <div class="hx-header-bar" onclick="toggleCard('card-hx2')">
+      <div class="hx-num">2</div>
+      <div>
+        <div class="hx-title">AMRAP + WINDOWS</div>
+        <div class="hx-type">Wall Balls sous double fatigue cardio</div>
+      </div>
+      <div class="hx-focus-tag">WALL<br>BALL</div>
+      <div class="card-arrow" style="margin-left:8px;">▼</div>
+    </div>
+    <div class="card-body">
+      <div class="hx-block">
+        <div class="hx-block-title">Part A — 20 min AMRAP</div>
+        <div class="hx-line"><div class="hx-dot"></div><div>40 Cal SkiErg @ allure seuil (Z3-Z4)</div></div>
+        <div class="hx-line"><div class="hx-dot"></div><div>25m Sled Push @ <strong>202kg (race weight)</strong></div></div>
+        <div class="hx-note">Repos 2 min après Part A</div>
+      </div>
+      <div class="hx-block">
+        <div class="hx-block-title">Part B — 3 min WINDOW × 4 rounds</div>
+        <div class="hx-line"><div class="hx-dot"></div><div>18 Cal Rowing</div></div>
+        <div class="hx-line"><div class="hx-dot"></div><div>18 Cal SkiErg</div></div>
+        <div class="hx-line"><div class="hx-dot"></div><div><strong>Max Wall Balls @ 9kg</strong> (temps restant)</div></div>
+        <div class="hx-note">Score = pire série WB · Repos 90s entre rounds</div>
+      </div>
+      <div class="hx-note" style="margin-top:10px;">👉 Objectif : tenir le score WB constant sur les 4 rounds. Si chute &gt;3 reps = surentraînement.</div>
+    </div>
+  </div>
+
+  <!-- HX3 -->
+  <div class="card" id="card-hx3">
+    <div class="hx-header-bar" onclick="toggleCard('card-hx3')">
+      <div class="hx-num">3</div>
+      <div>
+        <div class="hx-title">8/2 INTERVALS</div>
+        <div class="hx-type">Gestion effort · 3 rounds + finisher</div>
+      </div>
+      <div class="hx-focus-tag">SLED PULL<br>FC</div>
+      <div class="card-arrow" style="margin-left:8px;">▼</div>
+    </div>
+    <div class="card-body">
+      <div class="hx-block">
+        <div class="hx-block-title">8 MIN ON — 2 MIN OFF — 3 Rounds</div>
+        <div class="hx-line" style="font-weight:600;color:var(--accent3)"><div class="hx-dot" style="background:var(--accent3)"></div><div>ROUND 1 — BBJ + Run</div></div>
+        <div class="hx-line"><div class="hx-dot"></div><div>40m Burpee Broad Jumps</div></div>
+        <div class="hx-line"><div class="hx-dot"></div><div>800m Run (air runner)</div></div>
+        <div class="hx-line"><div class="hx-dot"></div><div>Max Cal SkiErg (temps restant)</div></div>
+        <div class="hx-line" style="font-weight:600;color:var(--accent3);margin-top:8px"><div class="hx-dot" style="background:var(--accent3)"></div><div>ROUND 2 — Sled Pull isolé</div></div>
+        <div class="hx-line"><div class="hx-dot"></div><div>25m Sled Pull @ <strong>153kg (race weight)</strong></div></div>
+        <div class="hx-line"><div class="hx-dot"></div><div>800m Run (air runner)</div></div>
+        <div class="hx-line"><div class="hx-dot"></div><div>Max Cal Rowing (temps restant)</div></div>
+        <div class="hx-line" style="font-weight:600;color:var(--accent3);margin-top:8px"><div class="hx-dot" style="background:var(--accent3)"></div><div>ROUND 3 — Farmers Carry</div></div>
+        <div class="hx-line"><div class="hx-dot"></div><div>200m Farmers Carry <strong>2×24kg</strong> (→ 2×32kg en P4)</div></div>
+        <div class="hx-line"><div class="hx-dot"></div><div>800m Run (air runner)</div></div>
+        <div class="hx-line"><div class="hx-dot"></div><div>Max Cal SkiErg (temps restant)</div></div>
+      </div>
+      <div class="hx-block">
+        <div class="hx-block-title">Part B — FOR TIME (après 2 min repos)</div>
+        <div class="hx-line"><div class="hx-dot"></div><div>50 Wall Balls 9kg</div></div>
+        <div class="hx-line"><div class="hx-dot"></div><div>200m Sandbag Lunges 20kg</div></div>
+      </div>
+      <div class="hx-cap">TIME CAP PART B : 8 MIN</div>
+      <div class="hx-note">👉 Sled Pull isolé R2 = qualité technique max. Farmers Carry R3 sous fatigue CV = conditions race. Noter Cal max chaque round.</div>
+    </div>
+  </div>
+
+  <!-- HX4 -->
+  <div class="card" id="card-hx4">
+    <div class="hx-header-bar" onclick="toggleCard('card-hx4')">
+      <div class="hx-num">4</div>
+      <div>
+        <div class="hx-title">CHIPPER</div>
+        <div class="hx-type">Volume complet · Endurance de force</div>
+      </div>
+      <div class="hx-focus-tag">VOLUME<br>TOTAL</div>
+      <div class="card-arrow" style="margin-left:8px;">▼</div>
+    </div>
+    <div class="card-body">
+      <div class="hx-block">
+        <div class="hx-block-title">FOR TIME — Chipper complet</div>
+        <div class="hx-line"><div class="hx-dot"></div><div>80 Cal SkiErg</div></div>
+        <div class="hx-line"><div class="hx-dot"></div><div>60 Wall Balls 9kg</div></div>
+        <div class="hx-line"><div class="hx-dot"></div><div>60m Burpee Broad Jumps</div></div>
+        <div class="hx-line"><div class="hx-dot"></div><div>50m Sandbag Lunges <strong>20kg</strong></div></div>
+        <div class="hx-line"><div class="hx-dot"></div><div>40m Sled Push @ <strong>202kg (race weight)</strong></div></div>
+        <div class="hx-line"><div class="hx-dot"></div><div>30 Cal Rowing</div></div>
+        <div class="hx-line"><div class="hx-dot"></div><div>100m Farmers Carry <strong>2×24kg</strong></div></div>
+        <div class="hx-line"><div class="hx-dot"></div><div>40m Sled Pull @ <strong>153kg (race weight)</strong></div></div>
+        <div class="hx-line"><div class="hx-dot"></div><div>10 Burpee Box Jump Over</div></div>
+      </div>
+      <div class="hx-cap">TIME CAP : 32 MIN</div>
+      <div class="hx-note">👉 Push et Pull séparés par Rowing + Farmers Carry — fatigue différente, qualité préservée. Toutes les stations représentées. Rythme constant, pas de sprint.</div>
+    </div>
+  </div>
+
+  <!-- HX5 -->
+  <div class="card" id="card-hx5">
+    <div class="hx-header-bar" onclick="toggleCard('card-hx5')">
+      <div class="hx-num">5</div>
+      <div>
+        <div class="hx-title">EMOM — Lunges / WB</div>
+        <div class="hx-type">Endurance de force spécifique</div>
+      </div>
+      <div class="hx-focus-tag">LUNGES<br>WB</div>
+      <div class="card-arrow" style="margin-left:8px;">▼</div>
+    </div>
+    <div class="card-body">
+      <div class="hx-block">
+        <div class="hx-block-title">EMOM 20 MIN</div>
+        <div class="hx-line" style="color:var(--accent3)"><div class="hx-dot" style="background:var(--accent3)"></div><div><strong>Min IMPAIRS (A)</strong></div></div>
+        <div class="hx-line"><div class="hx-dot"></div><div>10 Sandbag Lunges <strong>25kg</strong> + 5 Wall Balls 9kg</div></div>
+        <div class="hx-line" style="color:var(--accent3);margin-top:4px"><div class="hx-dot" style="background:var(--accent3)"></div><div><strong>Min PAIRS (B)</strong></div></div>
+        <div class="hx-line"><div class="hx-dot"></div><div>50m Farmers Carry <strong>2×24kg</strong> + 10 Cal Rowing</div></div>
+      </div>
+      <div class="hx-block">
+        <div class="hx-block-title">Repos 3 min · Puis FOR TIME</div>
+        <div class="hx-line"><div class="hx-dot"></div><div>100m Sandbag Lunges <strong>20kg</strong></div></div>
+        <div class="hx-line"><div class="hx-dot"></div><div>50 Wall Balls 9kg</div></div>
+      </div>
+      <div class="hx-cap">TIME CAP FINISHER : 8 MIN</div>
+      <div class="hx-note">👉 Min pairs denses : FC ~40s + Row ~50s = tient dans la minute. Lunges 25kg en EMOM, 20kg en finisher (volume). Points faibles clés — à tracker chaque semaine.</div>
+    </div>
+  </div>
+
+  <!-- HX6 -->
+  <div class="card" id="card-hx6">
+    <div class="hx-header-bar" onclick="toggleCard('card-hx6')">
+      <div class="hx-num">6</div>
+      <div>
+        <div class="hx-title">SIMULATION 3 ROUNDS</div>
+        <div class="hx-type">Format course · Sans repos imposé</div>
+      </div>
+      <div class="hx-focus-tag">RACE<br>SIM</div>
+      <div class="card-arrow" style="margin-left:8px;">▼</div>
+    </div>
+    <div class="card-body">
+      <div class="hx-block">
+        <div class="hx-block-title">3 ROUNDS — Sans repos imposé</div>
+        <div class="hx-line"><div class="hx-dot"></div><div>1 000m Run (air runner)</div></div>
+        <div class="hx-line"><div class="hx-dot"></div><div>1 000m RowErg</div></div>
+        <div class="hx-line"><div class="hx-dot"></div><div>25 Wall Balls 9kg</div></div>
+        <div class="hx-line"><div class="hx-dot"></div><div>25m Sled Push @ <strong>202kg (race weight)</strong></div></div>
+        <div class="hx-line"><div class="hx-dot"></div><div>20 Cal SkiErg</div></div>
+        <div class="hx-line"><div class="hx-dot"></div><div>100m Farmers Carry <strong>2×24kg</strong></div></div>
+        <div class="hx-line"><div class="hx-dot"></div><div>25m Sled Pull @ <strong>153kg (race weight)</strong></div></div>
+        <div class="hx-line"><div class="hx-dot"></div><div>25m Sandbag Lunges <strong>25kg</strong></div></div>
+      </div>
+      <div class="hx-cap">TIME CAP : 42 MIN</div>
+      <div class="hx-note">👉 Push et Pull séparés par SkiErg + Farmers Carry. Chrono par round — objectif ±15s de régularité. Simulation la plus complète du format Pro.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===================== PLANNING ===================== -->
+<div id="panel-planning" class="panel content" style="display:none;">
+
+  <div class="section-label">Rotation séances HX — Phase 1 (S1→S7)</div>
+
+  <div class="rotation-grid">
+    <div class="rotation-cell">
+      <div class="rotation-week">S1</div>
+      <div class="rotation-seance">HX3 — 8/2 Intervals</div>
+      <div class="rotation-note">Entrée progressive</div>
+    </div>
+    <div class="rotation-cell">
+      <div class="rotation-week">S2</div>
+      <div class="rotation-seance">HX1 — For Time</div>
+      <div class="rotation-note">Sled + BBJ</div>
+    </div>
+    <div class="rotation-cell">
+      <div class="rotation-week">S3</div>
+      <div class="rotation-seance">HX5 — EMOM WB</div>
+      <div class="rotation-note">Allégé si deload run</div>
+    </div>
+    <div class="rotation-cell">
+      <div class="rotation-week">S4</div>
+      <div class="rotation-seance">HX2 — AMRAP/Windows</div>
+      <div class="rotation-note">Run en deload</div>
+    </div>
+    <div class="rotation-cell">
+      <div class="rotation-week">S5</div>
+      <div class="rotation-seance">HX4 — Chipper</div>
+      <div class="rotation-note">Volume complet</div>
+    </div>
+    <div class="rotation-cell">
+      <div class="rotation-week">S6</div>
+      <div class="rotation-seance">HX6 — Simulation</div>
+      <div class="rotation-note">4 rounds race sim</div>
+    </div>
+    <div class="rotation-cell">
+      <div class="rotation-week">S7</div>
+      <div class="rotation-seance">HX5 allégée</div>
+      <div class="rotation-note">Deload pré-Montanaspe</div>
+    </div>
+  </div>
+
+  <div class="section-label" style="margin-top:24px;">Progression muscu P1</div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-body" style="display:block;padding:0;">
+      <table class="period-table">
+        <tr>
+          <th>Sem.</th>
+          <th>Intensité</th>
+          <th>Volume blocs B-C-D</th>
+          <th>Note</th>
+        </tr>
+        <tr>
+          <td><span class="week-num">S1</span></td>
+          <td>65-70%</td>
+          <td>3 séries</td>
+          <td style="font-size:12px;color:var(--muted)">Prise de marques</td>
+        </tr>
+        <tr>
+          <td><span class="week-num">S2</span></td>
+          <td>70-75%</td>
+          <td>3 séries</td>
+          <td style="font-size:12px;color:var(--muted)">+ Finisher</td>
+        </tr>
+        <tr class="deload-row">
+          <td><span class="week-num">S3</span></td>
+          <td>-20% charge</td>
+          <td>2 séries</td>
+          <td style="font-size:12px;"><span class="deload-badge">DELOAD MUSCU</span></td>
+        </tr>
+        <tr>
+          <td><span class="week-num">S4</span></td>
+          <td>75-80%</td>
+          <td>4 séries</td>
+          <td style="font-size:12px;color:var(--muted)">Run deload → charge</td>
+        </tr>
+        <tr>
+          <td><span class="week-num">S5</span></td>
+          <td>80%</td>
+          <td>4 séries</td>
+          <td style="font-size:12px;color:var(--muted)">Finisher systématique</td>
+        </tr>
+        <tr>
+          <td><span class="week-num">S6</span></td>
+          <td>80-85%</td>
+          <td>4 séries</td>
+          <td style="font-size:12px;color:var(--muted)">↑ Intensité bloc A</td>
+        </tr>
+        <tr class="deload-row">
+          <td><span class="week-num">S7</span></td>
+          <td>-20% charge</td>
+          <td>2 séries</td>
+          <td style="font-size:12px;"><span class="deload-badge">DELOAD PRÉ-TRAIL</span></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="section-label" style="margin-top:24px;">Règles de placement hebdomadaire</div>
+  <div class="card">
+    <div class="card-body" style="display:block;padding:14px 16px;">
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="display:flex;gap:10px;align-items:flex-start;">
+          <div style="color:var(--accent2);font-weight:700;flex-shrink:0;">✗</div>
+          <div style="font-size:13px;">FB B (Lower dominant) la veille d'un run long ou séance qualité</div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start;">
+          <div style="color:var(--accent);font-weight:700;flex-shrink:0;">✓</div>
+          <div style="font-size:13px;">HX idéalement 48h avant ou après une séance run intense</div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start;">
+          <div style="color:var(--accent);font-weight:700;flex-shrink:0;">✓</div>
+          <div style="font-size:13px;">Squash en récupération active — pas de contrainte forte</div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start;">
+          <div style="color:var(--accent3);font-weight:700;flex-shrink:0;">→</div>
+          <div style="font-size:13px;">FB A (Push/Hinge) moins impactant sur le run que FB B</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===================== PHASES ===================== -->
+<div id="panel-phases" class="panel content" style="display:none;">
+
+  <div class="section-label">Vue d'ensemble 2026</div>
+
+  <div class="phase-card">
+    <div class="phase-row">
+      <div>
+        <div class="phase-name">P1 — Base Endurance de Force</div>
+        <div class="phase-date">24 mars → 11 mai · 7 semaines</div>
+      </div>
+      <div class="phase-chip chip-active">EN COURS</div>
+    </div>
+    <div class="phase-bar"><div class="phase-bar-fill" style="width:100%;background:var(--accent)"></div></div>
+    <div style="font-size:12px;color:var(--muted);margin-top:8px;line-height:1.6;">FB x2 · Supersets · Finishers · 1 HX/semaine<br>Objectif : endurance de force + base musculaire</div>
+  </div>
+
+  <div class="phase-card">
+    <div class="phase-row">
+      <div>
+        <div class="phase-name">P2 — Trail Spécifique</div>
+        <div class="phase-date">12 mai → 8 juin · 4 semaines</div>
+      </div>
+      <div class="phase-chip chip-trail">TRAIL</div>
+    </div>
+    <div class="phase-bar"><div class="phase-bar-fill" style="width:100%;background:#4dff8a"></div></div>
+    <div style="font-size:12px;color:var(--muted);margin-top:8px;line-height:1.6;">FB 2 séries · Charges maintenues · Finishers supprimés<br>HX 1x orienté cardio (HX3, HX6)<br>🏔 Montanaspe 60km/4000m+ — 7 juin</div>
+  </div>
+
+  <div class="phase-card">
+    <div class="phase-row">
+      <div>
+        <div class="phase-name">Récupération Montanaspe</div>
+        <div class="phase-date">9 → 21 juin · 2 semaines</div>
+      </div>
+      <div class="phase-chip chip-recup">RÉCUP</div>
+    </div>
+    <div class="phase-bar"><div class="phase-bar-fill" style="width:100%;background:var(--muted)"></div></div>
+    <div style="font-size:12px;color:var(--muted);margin-top:8px;line-height:1.6;">Décharge complète · Mobilité · Récupération active</div>
+  </div>
+
+  <div class="phase-card">
+    <div class="phase-row">
+      <div>
+        <div class="phase-name">P3 — Trail / Force</div>
+        <div class="phase-date">22 juin → 16 août · 8 semaines</div>
+      </div>
+      <div class="phase-chip chip-trail">TRAIL+</div>
+    </div>
+    <div class="phase-bar"><div class="phase-bar-fill" style="width:100%;background:#4dff8a"></div></div>
+    <div style="font-size:12px;color:var(--muted);margin-top:8px;line-height:1.6;">Reprise progressive force · Réintroduction finishers<br>2e HX/semaine à partir de début août<br>🏔 Tour des Lacs 80km/5000m+ — 22 août</div>
+  </div>
+
+  <div class="phase-card">
+    <div class="phase-row">
+      <div>
+        <div class="phase-name">Récupération Tour des Lacs</div>
+        <div class="phase-date">17 → 30 août · 2 semaines</div>
+      </div>
+      <div class="phase-chip chip-recup">RÉCUP</div>
+    </div>
+    <div class="phase-bar"><div class="phase-bar-fill" style="width:100%;background:var(--muted)"></div></div>
+    <div style="font-size:12px;color:var(--muted);margin-top:8px;line-height:1.6;">Décharge · Transition vers prépa Hyrox</div>
+  </div>
+
+  <div class="phase-card">
+    <div class="phase-row">
+      <div>
+        <div class="phase-name">P4 — Hyrox Spécifique</div>
+        <div class="phase-date">31 août → 28 sept · 4 semaines</div>
+      </div>
+      <div class="phase-chip chip-hyrox">PEAK HX</div>
+    </div>
+    <div class="phase-bar"><div class="phase-bar-fill" style="width:100%;background:var(--accent2)"></div></div>
+    <div style="font-size:12px;color:var(--muted);margin-top:8px;line-height:1.6;">2 HX/semaine · FB maintenance (2-3 séries, charges élevées)<br>Focus absolu : Sled · WB · Lunges · BBJ<br>🏆 Hyrox Pro Toulouse — 3 octobre</div>
+  </div>
+
+  <div class="phase-card">
+    <div class="phase-row">
+      <div>
+        <div class="phase-name">Taper</div>
+        <div class="phase-date">29 sept → 3 oct · 5 jours</div>
+      </div>
+      <div class="phase-chip chip-recup">TAPER</div>
+    </div>
+    <div class="phase-bar"><div class="phase-bar-fill" style="width:60%;background:var(--accent)"></div></div>
+    <div style="font-size:12px;color:var(--muted);margin-top:8px;line-height:1.6;">Réduction volume -50% · Intensité maintenue · Activation J-2</div>
+  </div>
+
+</div>
+
+<script>
+  function toggleCard(id) {
+    const card = document.getElementById(id);
+    card.classList.toggle('open');
+  }
+
+  function showPanel(name) {
+    document.querySelectorAll('.panel').forEach(p => {
+      p.style.display = 'none';
+      p.classList.remove('active');
+    });
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+
+    const panel = document.getElementById('panel-' + name);
+    panel.style.display = 'block';
+    panel.classList.add('active');
+
+    const tabs = document.querySelectorAll('.tab');
+    const map = { fb: 0, hx: 1, planning: 2, phases: 3 };
+    tabs[map[name]].classList.add('active');
+  }
+</script>
+
+</body>
+</html>
